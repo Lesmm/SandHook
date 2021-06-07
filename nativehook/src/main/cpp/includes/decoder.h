@@ -7,7 +7,7 @@
 #include "base.h"
 #include "instruction.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace Decoder {
 
         using namespace Asm;

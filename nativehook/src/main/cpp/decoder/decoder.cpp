@@ -9,7 +9,7 @@
 #include "decoder_arm64.h"
 #endif
 
-using namespace SandHook::Decoder;
+using namespace SandLock::Decoder;
 
 bool DefaultVisitor::Visit(BaseUnit *unit, void *pc) {
     bool res = visitor_(reinterpret_cast<BaseInst*>(unit), pc);

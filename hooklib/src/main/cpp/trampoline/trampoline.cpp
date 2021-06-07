@@ -2,12 +2,12 @@
 // Created by SwiftGan on 2019/1/17.
 //
 
-#ifndef SANDHOOK_TRAMPOLINE_CPP
-#define SANDHOOK_TRAMPOLINE_CPP
+#ifndef SANDLOCK_TRAMPOLINE_CPP
+#define SANDLOCK_TRAMPOLINE_CPP
 
 #include "../includes/trampoline.h"
 
-namespace SandHook {
+namespace SandLock {
 
     class DirectJumpTrampoline : public Trampoline {
     public:
@@ -36,10 +36,10 @@ namespace SandHook {
         }
     };
 
-    class ReplacementHookTrampoline : public Trampoline {
+    class ReplacementLockTrampoline : public Trampoline {
     public:
 
-        void setHookMethod(Code hookMethod) {
+        void setLockMethod(Code hookMethod) {
             codeCopy(reinterpret_cast<Code>(&hookMethod), OFFSET_REPLACEMENT_ART_METHOD, BYTE_POINT);
             void* codeEntry = getEntryCodeAddr(hookMethod);
             codeCopy(reinterpret_cast<Code>(&codeEntry), OFFSET_REPLACEMENT_OFFSET_CODE_ENTRY, BYTE_POINT);
@@ -47,15 +47,15 @@ namespace SandHook {
 
     protected:
         Size codeLength() override {
-            return SIZE_REPLACEMENT_HOOK_TRAMPOLINE;
+            return SIZE_REPLACEMENT_LOCK_TRAMPOLINE;
         }
 
         Code templateCode() override {
-            return reinterpret_cast<Code>(REPLACEMENT_HOOK_TRAMPOLINE);
+            return reinterpret_cast<Code>(REPLACEMENT_LOCK_TRAMPOLINE);
         }
     };
 
-    class InlineHookTrampoline : public Trampoline {
+    class InlineLockTrampoline : public Trampoline {
     public:
 
         void setOriginMethod(Code originMethod) {
@@ -64,10 +64,10 @@ namespace SandHook {
             codeCopy(reinterpret_cast<Code>(&codeEntry), OFFSET_INLINE_ADDR_ORIGIN_CODE_ENTRY, BYTE_POINT);
         }
 
-        void setHookMethod(Code hookMethod) {
-            codeCopy(reinterpret_cast<Code>(&hookMethod), OFFSET_INLINE_HOOK_ART_METHOD, BYTE_POINT);
+        void setLockMethod(Code hookMethod) {
+            codeCopy(reinterpret_cast<Code>(&hookMethod), OFFSET_INLINE_LOCK_ART_METHOD, BYTE_POINT);
             void* codeEntry = getEntryCodeAddr(hookMethod);
-            codeCopy(reinterpret_cast<Code>(&codeEntry), OFFSET_INLINE_ADDR_HOOK_CODE_ENTRY, BYTE_POINT);
+            codeCopy(reinterpret_cast<Code>(&codeEntry), OFFSET_INLINE_ADDR_LOCK_CODE_ENTRY, BYTE_POINT);
         }
 
 //        void setEntryCodeOffset(Size offSet) {
@@ -94,18 +94,18 @@ namespace SandHook {
 
     protected:
         Size codeLength() override {
-            return SIZE_INLINE_HOOK_TRAMPOLINE;
+            return SIZE_INLINE_LOCK_TRAMPOLINE;
         }
 
         Code templateCode() override {
             #if defined(__arm__)
             if (isThumbCode()) {
-                return getThumbCodeAddress(reinterpret_cast<Code>(INLINE_HOOK_TRAMPOLINE_T));
+                return getThumbCodeAddress(reinterpret_cast<Code>(INLINE_LOCK_TRAMPOLINE_T));
             } else {
-                return reinterpret_cast<Code>(INLINE_HOOK_TRAMPOLINE);
+                return reinterpret_cast<Code>(INLINE_LOCK_TRAMPOLINE);
             }
             #else
-            return reinterpret_cast<Code>(INLINE_HOOK_TRAMPOLINE);
+            return reinterpret_cast<Code>(INLINE_LOCK_TRAMPOLINE);
             #endif
         }
     };
@@ -141,4 +141,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_TRAMPOLINE_CPP
+#endif //SANDLOCK_TRAMPOLINE_CPP

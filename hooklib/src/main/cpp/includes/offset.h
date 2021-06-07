@@ -2,12 +2,12 @@
 // Created by swift on 2019/2/3.
 //
 
-#ifndef SANDHOOK_OFFSET_H
-#define SANDHOOK_OFFSET_H
+#ifndef SANDLOCK_OFFSET_H
+#define SANDLOCK_OFFSET_H
 
 #include <unistd.h>
 
-namespace SandHook {
+namespace SandLock {
 
     class Offset {
     public:
@@ -25,4 +25,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_OFFSET_H
+#endif //SANDLOCK_OFFSET_H

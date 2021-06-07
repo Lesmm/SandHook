@@ -12,7 +12,7 @@ extern int SDK_INT;
 extern bool DEBUG;
 
 using namespace art::mirror;
-using namespace SandHook;
+using namespace SandLock;
 
 // Non-intrinsics: Caches whether we can use fast-path in the interpreter invokes.
 // Intrinsics: These bits are part of the intrinsic ordinal.

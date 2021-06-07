@@ -6,7 +6,7 @@
 
 #include "android/log.h"
 
-#define TAG "SandHook-Native"
+#define TAG "SandLock-Native"
 
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, TAG, __VA_ARGS__)

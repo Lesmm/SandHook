@@ -7,7 +7,7 @@
 #include "unit.h"
 #include <list>
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         class LabelBinder {

@@ -41,7 +41,7 @@ extern "C" {
 
     bool (*origin_ShouldUseInterpreterEntrypoint)(ArtMethod *artMethod, const void* quick_code) = nullptr;
     bool replace_ShouldUseInterpreterEntrypoint(ArtMethod *artMethod, const void* quick_code) {
-        if (SandHook::TrampolineManager::get().methodHooked(artMethod) && quick_code != nullptr) {
+        if (SandLock::TrampolineManager::get().methodLocked(artMethod) && quick_code != nullptr) {
             return false;
         }
         return origin_ShouldUseInterpreterEntrypoint(artMethod, quick_code);
@@ -157,10 +157,10 @@ extern "C" {
         //init native hook lib
         void* native_hook_handle = dlopen("libsandhook-native.so", RTLD_LAZY | RTLD_GLOBAL);
         if (native_hook_handle) {
-            hook_native = reinterpret_cast<void *(*)(void *, void *)>(dlsym(native_hook_handle, "SandInlineHook"));
+            hook_native = reinterpret_cast<void *(*)(void *, void *)>(dlsym(native_hook_handle, "SandInlineLock"));
         } else {
             hook_native = reinterpret_cast<void *(*)(void *, void *)>(getSymCompat(
-                    "libsandhook-native.so", "SandInlineHook"));
+                    "libsandhook-native.so", "SandInlineLock"));
         }
 
         if (SDK_INT >= ANDROID_R && hook_native) {
@@ -287,7 +287,7 @@ extern "C" {
     }
 
     void* getInterpreterBridge(bool isNative) {
-        SandHook::ElfImg libart(art_lib_path);
+        SandLock::ElfImg libart(art_lib_path);
         if (isNative) {
             return reinterpret_cast<void *>(libart.getSymbAddress("art_quick_generic_jni_trampoline"));
         } else {
@@ -335,7 +335,7 @@ extern "C" {
     }
 
     void replaceUpdateMethodsCode(void *thiz, ArtMethod * artMethod, const void *quick_code) {
-        if (SandHook::TrampolineManager::get().methodHooked(artMethod)) {
+        if (SandLock::TrampolineManager::get().methodLocked(artMethod)) {
             return; //skip
         }
         backup_update_methods_code(thiz, artMethod, quick_code);

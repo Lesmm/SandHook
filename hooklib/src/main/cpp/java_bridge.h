@@ -2,8 +2,8 @@
 // Created by ubuntu on 5/28/21.
 //
 
-#ifndef SANDHOOK_JAVA_BRIDGE_H
-#define SANDHOOK_JAVA_BRIDGE_H
+#ifndef SANDLOCK_JAVA_BRIDGE_H
+#define SANDLOCK_JAVA_BRIDGE_H
 
 #include <jni.h>
 #include <stdlib.h>
@@ -56,4 +56,4 @@ jclass __FindClassEx__(JNIEnv *env, const char *className);
 void __FillVariables__(JNIEnv *env, jobject class_loader, jobjectArray classes_methods_fields);
 
 
-#endif //SANDHOOK_JAVA_BRIDGE_H
+#endif //SANDLOCK_JAVA_BRIDGE_H

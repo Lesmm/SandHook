@@ -5,8 +5,8 @@
 #include "register_arm64.h"
 #include "register_list_arm64.h"
 
-using namespace SandHook::Asm;
-using namespace SandHook::RegistersA64;
+using namespace SandLock::Asm;
+using namespace SandLock::RegistersA64;
 
 
 RegisterA64::RegisterA64() {}

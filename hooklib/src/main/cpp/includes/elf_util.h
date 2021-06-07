@@ -1,8 +1,8 @@
 //
 // Created by Swift Gan on 2019/3/14.
 //
-#ifndef SANDHOOK_ELF_UTIL_H
-#define SANDHOOK_ELF_UTIL_H
+#ifndef SANDLOCK_ELF_UTIL_H
+#define SANDLOCK_ELF_UTIL_H
 
 #include <linux/elf.h>
 
@@ -28,7 +28,7 @@ typedef Elf32_Off Elf_Off;
 #define ELF_R_SYM(i) ELF32_R_SYM(i)
 #endif
 
-namespace SandHook {
+namespace SandLock {
 
     class ElfImg {
     public:
@@ -69,4 +69,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_ELF_UTIL_H
+#endif //SANDLOCK_ELF_UTIL_H

@@ -2,13 +2,13 @@
 // Created by SwiftGan on 2019/1/21.
 //
 
-#ifndef SANDHOOK_LOCK_H
-#define SANDHOOK_LOCK_H
+#ifndef SANDLOCK_LOCK_H
+#define SANDLOCK_LOCK_H
 
 #include "mutex"
 #include "../includes/hide_api.h"
 
-namespace SandHook {
+namespace SandLock {
 
     class AutoLock {
     public:
@@ -27,4 +27,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_LOCK_H
+#endif //SANDLOCK_LOCK_H

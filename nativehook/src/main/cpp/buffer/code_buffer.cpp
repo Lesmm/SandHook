@@ -8,8 +8,8 @@
 #include "code_buffer.h"
 #include "lock.h"
 
-using namespace SandHook::Assembler;
-using namespace SandHook::Utils;
+using namespace SandLock::Assembler;
+using namespace SandLock::Utils;
 
 void *AndroidCodeBuffer::GetBuffer(U32 size) {
     AutoLock autoLock(alloc_space_lock);

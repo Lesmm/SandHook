@@ -10,24 +10,24 @@
 #include "java_bridge.h"
 #include <jni.h>
 
-SandHook::TrampolineManager &trampolineManager = SandHook::TrampolineManager::get();
+SandLock::TrampolineManager &trampolineManager = SandLock::TrampolineManager::get();
 
 extern "C" int SDK_INT = 0;
 extern "C" bool DEBUG = false;
 
-enum HookMode {
+enum LockMode {
     AUTO = 0,
     INLINE = 1,
     REPLACE = 2
 };
 
-HookMode gHookMode = AUTO;
+LockMode gLockMode = AUTO;
 
 void ensureMethodCached(art::mirror::ArtMethod *hookMethod, art::mirror::ArtMethod *backupMethod) {
     if (SDK_INT >= ANDROID_P)
         return;
 
-    SandHook::StopTheWorld stopTheWorld;
+    SandLock::StopTheWorld stopTheWorld;
 
     uint32_t index = backupMethod->getDexMethodIndex();
     if (SDK_INT < ANDROID_O2) {
@@ -62,7 +62,7 @@ void ensureDeclareClass(JNIEnv *env, jclass type, jobject originMethod,
     }
 }
 
-bool doHookWithReplacement(JNIEnv* env,
+bool doLockWithReplacement(JNIEnv* env,
                            art::mirror::ArtMethod *originMethod,
                            art::mirror::ArtMethod *hookMethod,
                            art::mirror::ArtMethod *backupMethod) {
@@ -95,7 +95,7 @@ bool doHookWithReplacement(JNIEnv* env,
     originMethod->disableInterpreterForO();
     originMethod->disableFastInterpreterForQ();
 
-    SandHook::HookTrampoline* hookTrampoline = trampolineManager.installReplacementTrampoline(originMethod, hookMethod, backupMethod);
+    SandLock::LockTrampoline* hookTrampoline = trampolineManager.installReplacementTrampoline(originMethod, hookMethod, backupMethod);
     if (hookTrampoline != nullptr) {
         originMethod->setQuickCodeEntry(hookTrampoline->replacement->getCode());
         void* entryPointFormInterpreter = hookMethod->getInterpreterCodeEntry();
@@ -113,7 +113,7 @@ bool doHookWithReplacement(JNIEnv* env,
     }
 }
 
-bool doHookWithInline(JNIEnv* env,
+bool doLockWithInline(JNIEnv* env,
                       art::mirror::ArtMethod *originMethod,
                       art::mirror::ArtMethod *hookMethod,
                       art::mirror::ArtMethod *backupMethod) {
@@ -133,7 +133,7 @@ bool doHookWithInline(JNIEnv* env,
     }
     originMethod->flushCache();
 
-    SandHook::HookTrampoline* hookTrampoline = trampolineManager.installInlineTrampoline(originMethod, hookMethod, backupMethod);
+    SandLock::LockTrampoline* hookTrampoline = trampolineManager.installInlineTrampoline(originMethod, hookMethod, backupMethod);
 
     if (hookTrampoline == nullptr)
         return false;
@@ -155,20 +155,20 @@ bool doHookWithInline(JNIEnv* env,
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_initNative(JNIEnv *env, jclass type, jint sdk, jboolean debug) {
+Java_com_swift_sandhook_SandLock_initNative(JNIEnv *env, jclass type, jint sdk, jboolean debug) {
     SDK_INT = sdk;
     DEBUG = debug;
-    SandHook::CastCompilerOptions::init(env);
+    SandLock::CastCompilerOptions::init(env);
     initHideApi(env);
-    SandHook::CastArtMethod::init(env);
-    trampolineManager.init(SandHook::CastArtMethod::entryPointQuickCompiled->getOffset());
+    SandLock::CastArtMethod::init(env);
+    trampolineManager.init(SandLock::CastArtMethod::entryPointQuickCompiled->getOffset());
     return JNI_TRUE;
 
 }
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_com_swift_sandhook_SandHook_hookMethod(JNIEnv *env, jclass type, jobject originMethod,
+Java_com_swift_sandhook_SandLock_hookMethod(JNIEnv *env, jclass type, jobject originMethod,
                                             jobject hookMethod, jobject backupMethod, jint hookMode) {
 
     art::mirror::ArtMethod* origin = getArtMethod(env, originMethod);
@@ -176,59 +176,59 @@ Java_com_swift_sandhook_SandHook_hookMethod(JNIEnv *env, jclass type, jobject or
     art::mirror::ArtMethod* backup = backupMethod == NULL ? nullptr : getArtMethod(env,
                                                                                    backupMethod);
 
-    bool isInlineHook = false;
+    bool isInlineLock = false;
 
     int mode = reinterpret_cast<int>(hookMode);
 
     if (mode == INLINE) {
         if (!origin->isCompiled()) {
             if (SDK_INT >= ANDROID_N) {
-                isInlineHook = origin->compile(env);
+                isInlineLock = origin->compile(env);
             }
         } else {
-            isInlineHook = true;
+            isInlineLock = true;
         }
         goto label_hook;
     } else if (mode == REPLACE) {
-        isInlineHook = false;
+        isInlineLock = false;
         goto label_hook;
     }
 
     if (origin->isAbstract()) {
-        isInlineHook = false;
-    } else if (gHookMode != AUTO) {
-        if (gHookMode == INLINE) {
-            isInlineHook = origin->compile(env);
+        isInlineLock = false;
+    } else if (gLockMode != AUTO) {
+        if (gLockMode == INLINE) {
+            isInlineLock = origin->compile(env);
         } else {
-            isInlineHook = false;
+            isInlineLock = false;
         }
     } else if (SDK_INT >= ANDROID_O) {
-        isInlineHook = false;
+        isInlineLock = false;
     } else if (!origin->isCompiled()) {
         if (SDK_INT >= ANDROID_N) {
-            isInlineHook = origin->compile(env);
+            isInlineLock = origin->compile(env);
         } else {
-            isInlineHook = false;
+            isInlineLock = false;
         }
     } else {
-        isInlineHook = true;
+        isInlineLock = true;
     }
 
 
 label_hook:
     //suspend other threads
-    SandHook::StopTheWorld stopTheWorld;
-    if (isInlineHook && trampolineManager.canSafeInline(origin)) {
-        return doHookWithInline(env, origin, hook, backup) ? INLINE : -1;
+    SandLock::StopTheWorld stopTheWorld;
+    if (isInlineLock && trampolineManager.canSafeInline(origin)) {
+        return doLockWithInline(env, origin, hook, backup) ? INLINE : -1;
     } else {
-        return doHookWithReplacement(env, origin, hook, backup) ? REPLACE : -1;
+        return doLockWithReplacement(env, origin, hook, backup) ? REPLACE : -1;
     }
 
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_ensureMethodCached(JNIEnv *env, jclass type, jobject hook,
+Java_com_swift_sandhook_SandLock_ensureMethodCached(JNIEnv *env, jclass type, jobject hook,
                                                     jobject backup) {
     art::mirror::ArtMethod* hookeMethod = getArtMethod(env, hook);
     art::mirror::ArtMethod* backupMethod = backup == NULL ? nullptr : getArtMethod(env, backup);
@@ -237,7 +237,7 @@ Java_com_swift_sandhook_SandHook_ensureMethodCached(JNIEnv *env, jclass type, jo
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_compileMethod(JNIEnv *env, jclass type, jobject member) {
+Java_com_swift_sandhook_SandLock_compileMethod(JNIEnv *env, jclass type, jobject member) {
 
     if (member == NULL)
         return JNI_FALSE;
@@ -247,7 +247,7 @@ Java_com_swift_sandhook_SandHook_compileMethod(JNIEnv *env, jclass type, jobject
         return JNI_FALSE;
 
     if (!method->isCompiled()) {
-        SandHook::StopTheWorld stopTheWorld;
+        SandLock::StopTheWorld stopTheWorld;
         if (!method->compile(env)) {
             if (SDK_INT >= ANDROID_N) {
                 method->disableCompilable();
@@ -265,7 +265,7 @@ Java_com_swift_sandhook_SandHook_compileMethod(JNIEnv *env, jclass type, jobject
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_deCompileMethod(JNIEnv *env, jclass type, jobject member, jboolean disableJit) {
+Java_com_swift_sandhook_SandLock_deCompileMethod(JNIEnv *env, jclass type, jobject member, jboolean disableJit) {
 
     if (member == NULL)
         return JNI_FALSE;
@@ -279,7 +279,7 @@ Java_com_swift_sandhook_SandHook_deCompileMethod(JNIEnv *env, jclass type, jobje
     }
 
     if (method->isCompiled()) {
-        SandHook::StopTheWorld stopTheWorld;
+        SandLock::StopTheWorld stopTheWorld;
         if (SDK_INT >= ANDROID_N) {
             method->disableCompilable();
         }
@@ -292,43 +292,43 @@ Java_com_swift_sandhook_SandHook_deCompileMethod(JNIEnv *env, jclass type, jobje
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_com_swift_sandhook_SandHook_getObjectNative(JNIEnv *env, jclass type, jlong thread,
+Java_com_swift_sandhook_SandLock_getObjectNative(JNIEnv *env, jclass type, jlong thread,
                                                  jlong address) {
     return getJavaObject(env, thread ? reinterpret_cast<void *>(thread) : getCurrentThread(), reinterpret_cast<void *>(address));
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_canGetObject(JNIEnv *env, jclass type) {
+Java_com_swift_sandhook_SandLock_canGetObject(JNIEnv *env, jclass type) {
     return static_cast<jboolean>(canGetObject());
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_setHookMode(JNIEnv *env, jclass type, jint mode) {
-    gHookMode = static_cast<HookMode>(mode);
+Java_com_swift_sandhook_SandLock_setLockMode(JNIEnv *env, jclass type, jint mode) {
+    gLockMode = static_cast<LockMode>(mode);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_setInlineSafeCheck(JNIEnv *env, jclass type, jboolean check) {
+Java_com_swift_sandhook_SandLock_setInlineSafeCheck(JNIEnv *env, jclass type, jboolean check) {
     trampolineManager.inlineSecurityCheck = check;
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_skipAllSafeCheck(JNIEnv *env, jclass type, jboolean skip) {
+Java_com_swift_sandhook_SandLock_skipAllSafeCheck(JNIEnv *env, jclass type, jboolean skip) {
     trampolineManager.skipAllCheck = skip;
 }
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_is64Bit(JNIEnv *env, jclass type) {
+Java_com_swift_sandhook_SandLock_is64Bit(JNIEnv *env, jclass type) {
     return static_cast<jboolean>(BYTE_POINT == 8);
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_disableVMInline(JNIEnv *env, jclass type) {
+Java_com_swift_sandhook_SandLock_disableVMInline(JNIEnv *env, jclass type) {
     if (SDK_INT < ANDROID_N)
         return JNI_FALSE;
     replaceUpdateCompilerOptionsQ();
@@ -340,20 +340,20 @@ Java_com_swift_sandhook_SandHook_disableVMInline(JNIEnv *env, jclass type) {
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_disableDex2oatInline(JNIEnv *env, jclass type, jboolean disableDex2oat) {
-    return static_cast<jboolean>(SandHook::NativeHook::hookDex2oat(disableDex2oat));
+Java_com_swift_sandhook_SandLock_disableDex2oatInline(JNIEnv *env, jclass type, jboolean disableDex2oat) {
+    return static_cast<jboolean>(SandLock::NativeLock::hookDex2oat(disableDex2oat));
 }
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_setNativeEntry(JNIEnv *env, jclass type, jobject origin, jobject hook, jlong jniTrampoline) {
+Java_com_swift_sandhook_SandLock_setNativeEntry(JNIEnv *env, jclass type, jobject origin, jobject hook, jlong jniTrampoline) {
     if (origin == nullptr || hook == NULL)
         return JNI_FALSE;
     art::mirror::ArtMethod* hookMethod = getArtMethod(env, hook);
     art::mirror::ArtMethod* originMethod = getArtMethod(env, origin);
     originMethod->backup(hookMethod);
     hookMethod->setNative();
-    hookMethod->setQuickCodeEntry(SandHook::CastArtMethod::genericJniStub);
+    hookMethod->setQuickCodeEntry(SandLock::CastArtMethod::genericJniStub);
     hookMethod->setJniCodeEntry(reinterpret_cast<void *>(jniTrampoline));
     hookMethod->disableCompilable();
     hookMethod->flushCache();
@@ -366,7 +366,7 @@ static jmethodID method_class_init = nullptr;
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_swift_sandhook_SandHook_initForPendingHook(JNIEnv *env, jclass type) {
+Java_com_swift_sandhook_SandLock_initForPendingLock(JNIEnv *env, jclass type) {
     class_pending_hook = static_cast<jclass>(env->NewGlobalRef(__FindClassEx__(env, kCLASS_PENDING)));
     method_class_init = env->GetStaticMethodID(class_pending_hook, kMETHOD_PENDING_INIT, kMETHOD_PENDING_INIT_SIG);
     auto class_init_handler = [](void *clazz_ptr) {
@@ -400,47 +400,43 @@ Java_com_swift_sandhook_test_TestClass_jni_1test(JNIEnv *env, jobject instance) 
 
 //native hook
 extern "C"
-JNIEXPORT bool nativeHookNoBackup(void* origin, void* hook) {
+JNIEXPORT bool nativeLockNoBackup(void* origin, void* hook) {
 
     if (origin == nullptr || hook == nullptr)
         return false;
 
-    SandHook::StopTheWorld stopTheWorld;
+    SandLock::StopTheWorld stopTheWorld;
 
-    return trampolineManager.installNativeHookTrampolineNoBackup(origin, hook) != nullptr;
+    return trampolineManager.installNativeLockTrampolineNoBackup(origin, hook) != nullptr;
 
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_MakeInitializedClassVisibilyInitialized(JNIEnv *env, jclass clazz,
+Java_com_swift_sandhook_SandLock_MakeInitializedClassVisibilyInitialized(JNIEnv *env, jclass clazz,
                                                                          jlong self) {
     MakeInitializedClassVisibilyInitialized(reinterpret_cast<void*>(self));
 }
 extern "C"
 JNIEXPORT void* findSym(const char *elf, const char *sym_name) {
-    SandHook::ElfImg elfImg(elf);
+    SandLock::ElfImg elfImg(elf);
     return reinterpret_cast<void *>(elfImg.getSymbAddress(sym_name));
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) ;
-
-static JNINativeMethod jniSandHook[] = {
+static JNINativeMethod jniSandLock[] = {
         {
                 "initNative",
                 "(IZ)Z",
-                (void *) Java_com_swift_sandhook_SandHook_initNative
+                (void *) Java_com_swift_sandhook_SandLock_initNative
         },
         {
                 "hookMethod",
                 "(Ljava/lang/reflect/Member;Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;I)I",
-                (void *) Java_com_swift_sandhook_SandHook_hookMethod
+                (void *) Java_com_swift_sandhook_SandLock_hookMethod
         },
         {
                 "ensureMethodCached",
                 "(Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V",
-                (void *) Java_com_swift_sandhook_SandHook_ensureMethodCached
+                (void *) Java_com_swift_sandhook_SandLock_ensureMethodCached
         },
         {
                 "ensureDeclareClass",
@@ -450,73 +446,68 @@ static JNINativeMethod jniSandHook[] = {
         {
                 "compileMethod",
                 "(Ljava/lang/reflect/Member;)Z",
-                (void *) Java_com_swift_sandhook_SandHook_compileMethod
+                (void *) Java_com_swift_sandhook_SandLock_compileMethod
         },
         {
                 "deCompileMethod",
                 "(Ljava/lang/reflect/Member;Z)Z",
-                (void *) Java_com_swift_sandhook_SandHook_deCompileMethod
+                (void *) Java_com_swift_sandhook_SandLock_deCompileMethod
         },
         {
                 "getObjectNative",
                 "(JJ)Ljava/lang/Object;",
-                (void *) Java_com_swift_sandhook_SandHook_getObjectNative
+                (void *) Java_com_swift_sandhook_SandLock_getObjectNative
         },
         {
                 "canGetObject",
                 "()Z",
-                (void *) Java_com_swift_sandhook_SandHook_canGetObject
+                (void *) Java_com_swift_sandhook_SandLock_canGetObject
         },
         {
-                "setHookMode",
+                "setLockMode",
                 "(I)V",
-                (void *) Java_com_swift_sandhook_SandHook_setHookMode
+                (void *) Java_com_swift_sandhook_SandLock_setLockMode
         },
         {
                 "setInlineSafeCheck",
                 "(Z)V",
-                (void *) Java_com_swift_sandhook_SandHook_setInlineSafeCheck
+                (void *) Java_com_swift_sandhook_SandLock_setInlineSafeCheck
         },
         {
                 "skipAllSafeCheck",
                 "(Z)V",
-                (void *) Java_com_swift_sandhook_SandHook_skipAllSafeCheck
+                (void *) Java_com_swift_sandhook_SandLock_skipAllSafeCheck
         },
         {
                 "is64Bit",
                 "()Z",
-                (void *) Java_com_swift_sandhook_SandHook_is64Bit
+                (void *) Java_com_swift_sandhook_SandLock_is64Bit
         },
         {
                 "disableVMInline",
                 "()Z",
-                (void *) Java_com_swift_sandhook_SandHook_disableVMInline
+                (void *) Java_com_swift_sandhook_SandLock_disableVMInline
         },
         {
                 "disableDex2oatInline",
                 "(Z)Z",
-                (void *) Java_com_swift_sandhook_SandHook_disableDex2oatInline
+                (void *) Java_com_swift_sandhook_SandLock_disableDex2oatInline
         },
         {
                 "setNativeEntry",
                 "(Ljava/lang/reflect/Member;Ljava/lang/reflect/Member;J)Z",
-                (void *) Java_com_swift_sandhook_SandHook_setNativeEntry
+                (void *) Java_com_swift_sandhook_SandLock_setNativeEntry
         },
         {
-                "initForPendingHook",
+                "initForPendingLock",
                 "()Z",
-                (void *) Java_com_swift_sandhook_SandHook_initForPendingHook
+                (void *) Java_com_swift_sandhook_SandLock_initForPendingLock
         },
         {
                 "MakeInitializedClassVisibilyInitialized",
                 "(J)V",
-                (void*) Java_com_swift_sandhook_SandHook_MakeInitializedClassVisibilyInitialized
+                (void*) Java_com_swift_sandhook_SandLock_MakeInitializedClassVisibilyInitialized
         },
-        {
-                "test",
-                "(Ljava/lang/ClassLoader;[Ljava/lang/String;)V",
-                (void*) Java_com_swift_sandhook_SandHook_test
-        }
 };
 
 static JNINativeMethod jniNeverCall[] = {
@@ -545,11 +536,11 @@ static bool registerNativeMethods(JNIEnv *env, const char *className, JNINativeM
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandHook_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) {
+Java_com_swift_sandhook_SandLock_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) {
     __FillVariables__(env, class_loader, classes_methods_fields);
 
     int jniMethodSize = sizeof(JNINativeMethod);
-    if (!registerNativeMethods(env, kCLASS_SAND, jniSandHook, sizeof(jniSandHook) / jniMethodSize)) {
+    if (!registerNativeMethods(env, kCLASS_SAND, jniSandLock, sizeof(jniSandLock) / jniMethodSize)) {
         LOGE("JNI __JNI_OnLoad__ error kCLASS_SAND");
         return;
     }
@@ -563,18 +554,24 @@ Java_com_swift_sandhook_SandHook_test(JNIEnv *env, jclass clazz, jobject class_l
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
-//    int jniMethodSize = sizeof(JNINativeMethod);
-
     JNIEnv *env = NULL;
 
     if (vm->GetEnv((void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return -1;
     }
 
-//    if (!registerNativeMethods(env, kCLASS_SAND, jniSandHook, sizeof(jniSandHook) / jniMethodSize)) {
-//        return -1;
-//    }
-//
+    JNINativeMethod jniTest[] = {
+            {
+                    "test",
+                    "(Ljava/lang/ClassLoader;[Ljava/lang/String;)V",
+                    (void*) Java_com_swift_sandhook_SandLock_test
+            }
+    };
+
+    if (!registerNativeMethods(env, "com/swift/sandhook/SandHook", jniTest, 1)) {
+        return -1;
+    }
+
 //    if (!registerNativeMethods(env, kCLASS_NEVER, jniNeverCall, sizeof(jniNeverCall) / jniMethodSize)) {
 //        return -1;
 //    }
@@ -585,13 +582,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 extern "C"
-JNIEXPORT bool JNI_Load_Ex(JNIEnv* env, jclass classSandHook, jclass classNeverCall) {
+JNIEXPORT bool JNI_Load_Ex(JNIEnv* env, jclass classSandLock, jclass classNeverCall) {
     int jniMethodSize = sizeof(JNINativeMethod);
 
-    if (env == nullptr || classSandHook == nullptr || classNeverCall == nullptr)
+    if (env == nullptr || classSandLock == nullptr || classNeverCall == nullptr)
         return false;
 
-    if (env->RegisterNatives(classSandHook, jniSandHook, sizeof(jniSandHook) / jniMethodSize) < 0) {
+    if (env->RegisterNatives(classSandLock, jniSandLock, sizeof(jniSandLock) / jniMethodSize) < 0) {
         return false;
     }
 

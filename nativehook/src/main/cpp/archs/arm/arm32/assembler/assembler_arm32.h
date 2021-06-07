@@ -2,8 +2,8 @@
 // Created by swift on 2019/5/22.
 //
 
-#ifndef SANDHOOK_ASSEMBLER_A32_H
-#define SANDHOOK_ASSEMBLER_A32_H
+#ifndef SANDLOCK_ASSEMBLER_A32_H
+#define SANDLOCK_ASSEMBLER_A32_H
 
 #include "assembler.h"
 #include "register_arm32.h"
@@ -15,9 +15,9 @@ if ((Addr) __ GetPC() % 4 != 0) { \
 __ Nop16(); \
 }
 
-using namespace SandHook::AsmA32;
+using namespace SandLock::AsmA32;
 
-namespace SandHook {
+namespace SandLock {
     namespace Assembler {
 
         class AssemblerA32 {
@@ -85,4 +85,4 @@ namespace SandHook {
     }
 }
 
-#endif //SANDHOOK_ASSEMBLER_A32_H
+#endif //SANDLOCK_ASSEMBLER_A32_H

@@ -17,7 +17,7 @@ public: \
     }   \
 };
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         template <typename D>

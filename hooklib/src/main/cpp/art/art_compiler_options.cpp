@@ -6,7 +6,7 @@
 #include "../includes/cast_compiler_options.h"
 #include "../includes/hide_api.h"
 
-using namespace SandHook;
+using namespace SandLock;
 using namespace art;
 
 extern int SDK_INT;

@@ -6,7 +6,7 @@
 
 #include "register_arm32.h"
 
-using namespace SandHook::Asm;
+using namespace SandLock::Asm;
 
     // clang-format off
 #define ARM32_REGISTER_COUNT 16
@@ -16,7 +16,7 @@ using namespace SandHook::Asm;
   R(8)  R(9)  R(10) R(11) R(12) R(13) R(14) R(15)
 
 
-namespace SandHook {
+namespace SandLock {
 namespace RegistersA32 {
 #define DEFINE_REGISTERS(N) \
   extern RegisterA32 R##N;

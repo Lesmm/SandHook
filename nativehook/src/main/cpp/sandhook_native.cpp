@@ -9,8 +9,8 @@
 #include "hook.h"
 #include "elf.h"
 
-using namespace SandHook::Hook;
-using namespace SandHook::Elf;
+using namespace SandLock::Lock;
+using namespace SandLock::Elf;
 
 extern "C"
 EXPORT void* SandGetModuleBase(const char* so) {
@@ -24,43 +24,43 @@ EXPORT void* SandGetSym(const char* so, const char* symb) {
 }
 
 extern "C"
-EXPORT void* SandInlineHook(void* origin, void* replace) {
-    return InlineHook::instance->Hook(origin, replace);
+EXPORT void* SandInlineLock(void* origin, void* replace) {
+    return InlineLock::instance->Lock(origin, replace);
 }
 
 extern "C"
-EXPORT void* SandInlineHookSym(const char* so, const char* symb, void* replace) {
+EXPORT void* SandInlineLockSym(const char* so, const char* symb, void* replace) {
     ElfImg elfImg(so);
     void* origin = reinterpret_cast<void *>(elfImg.GetSymAddress(symb));
 
     if (origin == nullptr)
         return nullptr;
-    return InlineHook::instance->Hook(origin, replace);
+    return InlineLock::instance->Lock(origin, replace);
 }
 
 extern "C"
-EXPORT void* SandSingleInstHook(void* origin, void* replace) {
-    return InlineHook::instance->SingleInstHook(origin, replace);
+EXPORT void* SandSingleInstLock(void* origin, void* replace) {
+    return InlineLock::instance->SingleInstLock(origin, replace);
 }
 
 extern "C"
-EXPORT void* SandSingleInstHookSym(const char* so, const char* symb, void* replace) {
+EXPORT void* SandSingleInstLockSym(const char* so, const char* symb, void* replace) {
     ElfImg elfImg(so);
     void* origin = reinterpret_cast<void *>(elfImg.GetSymAddress(symb));
 
     if (origin == nullptr)
         return nullptr;
-    return InlineHook::instance->SingleInstHook(origin, replace);
+    return InlineLock::instance->SingleInstLock(origin, replace);
 }
 
 extern "C"
 EXPORT bool SandBreakPoint(void *origin, void (*callback)(REG[])) {
-    return InlineHook::instance->BreakPoint(origin, callback);
+    return InlineLock::instance->BreakPoint(origin, callback);
 }
 
 extern "C"
 EXPORT bool SandSingleInstBreakPoint(void *origin, BreakCallback(callback)) {
-    return InlineHook::instance->SingleBreakPoint(origin, callback);
+    return InlineLock::instance->SingleBreakPoint(origin, callback);
 }
 
 #if defined(__aarch64__)

@@ -2,8 +2,8 @@
 // Created by swift on 2019/2/3.
 //
 
-#ifndef SANDHOOK_INST_VISTOR_H
-#define SANDHOOK_INST_VISTOR_H
+#ifndef SANDLOCK_INST_VISTOR_H
+#define SANDLOCK_INST_VISTOR_H
 
 #include <cstdint>
 #include "arch.h"
@@ -11,7 +11,7 @@
 #define CASE(inst,mask,match,type) \
 if ((inst & mask) == match) { return type; } \
 
-namespace SandHook {
+namespace SandLock {
 
     union Arm32Code {
         uint32_t code;
@@ -117,4 +117,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_INST_VISTOR_H
+#endif //SANDLOCK_INST_VISTOR_H

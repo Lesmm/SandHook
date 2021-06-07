@@ -15,9 +15,14 @@ CPP 方面:
 
     3. 新建 Android.bp, 按照两个 CMakeLists.txt 写好
 
-    4. 把两个CPP Module的所有代码 Hook/HOOK/hook 关键字都改成 Lock
+    4. 把两个CPP Module的所有代码 Hook/HOOK 关键字都改成 Lock/LOCK
+        "setLockMode" 及 "initForPendingLock" 两个Native方法注册时, 对应JAVA那边也要改了
+        关键字 hook 换成 lock 时: 因为只改代码, 文件名这些不用改, 基本上把 _sandhook_ 换成 _sandlock_ 就可以了
+        而且 nativehook Module 没有需要替换 hook 的代码,只换了 hooklib Module 就行了
+        注意: bool isSandHooker(char *const args[]) 那里写死了个 SandHooker, 需要注意在JAVA层的两个XposedCompat Module的
+        CLASS_NAME_PREFIX 属性也跟发凉着改了
 
-    4. 复制 Nativehook 的 cpp 代码复制到 nativelib 下
+    5. 复制 Nativehook 的 cpp 代码复制到 nativelib 下
 
 
 
@@ -28,4 +33,6 @@ JAVA 方面:
     2. SandHookConfig.java 把 import ...BuildConfig 一行去掉
 
     3. JAVA 方面的类名方法名随便改, 只要往 __JNI_OnLoad__ 传过去就行
+
+    4. TODO ... 注册时 Native Method 时的方法名以后再改了 ~~~
 

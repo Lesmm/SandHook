@@ -7,7 +7,7 @@
 #define RegT ip
 #define RegMethod r0
 
-FUNCTION_START(REPLACEMENT_HOOK_TRAMPOLINE)
+FUNCTION_START(REPLACEMENT_LOCK_TRAMPOLINE)
     ldr RegMethod, addr_art_method
     ldr Reg0, addr_code_entry
     ldr pc, [Reg0]
@@ -15,7 +15,7 @@ addr_art_method:
     .long 0
 addr_code_entry:
     .long 0
-FUNCTION_END(REPLACEMENT_HOOK_TRAMPOLINE)
+FUNCTION_END(REPLACEMENT_LOCK_TRAMPOLINE)
 
 
 #define SIZE_JUMP #0x8
@@ -27,7 +27,7 @@ FUNCTION_END(DIRECT_JUMP_TRAMPOLINE)
 
 
 
-FUNCTION_START(INLINE_HOOK_TRAMPOLINE)
+FUNCTION_START(INLINE_LOCK_TRAMPOLINE)
     ldr Reg0, origin_art_method
     cmp RegMethod, Reg0
     bne origin_code
@@ -50,7 +50,7 @@ hook_art_method:
     .long 0
 addr_hook_code_entry:
     .long 0
-FUNCTION_END(INLINE_HOOK_TRAMPOLINE)
+FUNCTION_END(INLINE_LOCK_TRAMPOLINE)
 
 
 FUNCTION_START(CALL_ORIGIN_TRAMPOLINE)
@@ -70,7 +70,7 @@ addr_target_t:
 FUNCTION_END(DIRECT_JUMP_TRAMPOLINE_T)
 
 
-FUNCTION_START_T(INLINE_HOOK_TRAMPOLINE_T)
+FUNCTION_START_T(INLINE_LOCK_TRAMPOLINE_T)
     //4 byte
     ldr RegT, origin_art_method_t
     //2 byte
@@ -110,7 +110,7 @@ hook_art_method_t:
     .long 0
 addr_hook_code_entry_t:
     .long 0
-FUNCTION_END(INLINE_HOOK_TRAMPOLINE_T)
+FUNCTION_END(INLINE_LOCK_TRAMPOLINE_T)
 
 FUNCTION_START_T(CALL_ORIGIN_TRAMPOLINE_T)
     ldr RegMethod, origin_method_t

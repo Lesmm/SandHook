@@ -11,8 +11,8 @@
 #define SET_OPCODE(X) Get()->opcode = OPCODE_T32(X)
 #define SET_OPCODE_MULTI(X, INDEX) Get()->opcode##INDEX = OPCODE_T32(X##_##INDEX)
 
-using namespace SandHook::Asm;
-using namespace SandHook::AsmA32;
+using namespace SandLock::Asm;
+using namespace SandLock::AsmA32;
 
 
 

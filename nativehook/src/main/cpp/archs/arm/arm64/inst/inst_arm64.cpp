@@ -10,8 +10,8 @@
 #define DECODE_OFFSET(bits, ext) SignExtend64(bits + ext, COMBINE(Get()->imm##bits, 0, ext))
 #define ENCODE_OFFSET(bits, ext) Get()->imm##bits = TruncateToUint##bits(offset >> ext)
 
-using namespace SandHook::Asm;
-using namespace SandHook::AsmA64;
+using namespace SandLock::Asm;
+using namespace SandLock::AsmA64;
 
 //PC Rel Inst
 

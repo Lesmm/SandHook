@@ -20,11 +20,11 @@ int inline getArrayItemCount(char *const array[]) {
     return i;
 }
 
-bool isSandHooker(char *const args[]) {
+bool isSandLocker(char *const args[]) {
     int orig_arg_count = getArrayItemCount(args);
 
     for (int i = 0; i < orig_arg_count; i++) {
-        if (strstr(args[i], "SandHooker")) {
+        if (strstr(args[i], "SandLocker")) {
             LOGE("skip dex2oat hooker!");
             return true;
         }
@@ -58,7 +58,7 @@ char **build_new_argv(char *const argv[]) {
 
 int fake_execve_disable_inline(const char *pathname, char *argv[], char *const envp[]) {
     if (strstr(pathname, "dex2oat")) {
-        if (SDK_INT >= ANDROID_N && isSandHooker(argv)) {
+        if (SDK_INT >= ANDROID_N && isSandLocker(argv)) {
             LOGE("skip dex2oat!");
             return -1;
         }
@@ -80,16 +80,16 @@ int fake_execve_disable_oat(const char *pathname, char *argv[], char *const envp
     return static_cast<int>(syscall(__NR_execve, pathname, argv, envp));
 }
 
-namespace SandHook {
+namespace SandLock {
 
-    volatile bool hasHookedDex2oat = false;
+    volatile bool hasLockedDex2oat = false;
     
-    bool NativeHook::hookDex2oat(bool disableDex2oat) {
-        if (hasHookedDex2oat)
+    bool NativeLock::hookDex2oat(bool disableDex2oat) {
+        if (hasLockedDex2oat)
             return false;
 
-        hasHookedDex2oat = true;
-        return nativeHookNoBackup(reinterpret_cast<void *>(execve),
+        hasLockedDex2oat = true;
+        return nativeLockNoBackup(reinterpret_cast<void *>(execve),
                            reinterpret_cast<void *>(disableDex2oat ? fake_execve_disable_oat : fake_execve_disable_inline));
     }
     

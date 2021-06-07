@@ -3,8 +3,8 @@
 //
 
 
-#ifndef SANDHOOK_ICAST_H
-#define SANDHOOK_ICAST_H
+#ifndef SANDLOCK_ICAST_H
+#define SANDLOCK_ICAST_H
 
 #include <stdint.h>
 #include <string.h>
@@ -13,7 +13,7 @@
 #include "utils.h"
 
 
-namespace SandHook {
+namespace SandLock {
 
     template <typename T>
     class cast {
@@ -120,4 +120,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_ICAST_H
+#endif //SANDLOCK_ICAST_H

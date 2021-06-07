@@ -71,7 +71,7 @@ Stub 中有使用
 #define Reg1 x16
 #define RegMethod x0
 
-FUNCTION_START(REPLACEMENT_HOOK_TRAMPOLINE)
+FUNCTION_START(REPLACEMENT_LOCK_TRAMPOLINE)
     ldr RegMethod, addr_art_method
     ldr Reg0, addr_code_entry
     ldr Reg0, [Reg0]
@@ -82,7 +82,7 @@ addr_art_method:
 addr_code_entry:
     .long 0
     .long 0
-FUNCTION_END(REPLACEMENT_HOOK_TRAMPOLINE)
+FUNCTION_END(REPLACEMENT_LOCK_TRAMPOLINE)
 
 #define SIZE_JUMP #0x10
 FUNCTION_START(DIRECT_JUMP_TRAMPOLINE)
@@ -93,7 +93,7 @@ addr_target:
     .long 0
 FUNCTION_END(DIRECT_JUMP_TRAMPOLINE)
 
-FUNCTION_START(INLINE_HOOK_TRAMPOLINE)
+FUNCTION_START(INLINE_LOCK_TRAMPOLINE)
     ldr Reg0, origin_art_method
     cmp RegMethod, Reg0
     bne origin_code
@@ -122,7 +122,7 @@ hook_art_method:
 addr_hook_code_entry:
     .long 0
     .long 0
-FUNCTION_END(INLINE_HOOK_TRAMPOLINE)
+FUNCTION_END(INLINE_LOCK_TRAMPOLINE)
 
 FUNCTION_START(CALL_ORIGIN_TRAMPOLINE)
     ldr RegMethod, call_origin_art_method

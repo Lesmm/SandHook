@@ -6,10 +6,10 @@
 #include "decoder.h"
 #include "lock.h"
 
-using namespace SandHook::RegistersA32;
-using namespace SandHook::AsmA32;
-using namespace SandHook::Utils;
-using namespace SandHook::Decoder;
+using namespace SandLock::RegistersA32;
+using namespace SandLock::AsmA32;
+using namespace SandLock::Utils;
+using namespace SandLock::Decoder;
 
 #define __ assembler_a32->
 

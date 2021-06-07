@@ -10,29 +10,29 @@
 #include "hook_arm64.h"
 #endif
 
-using namespace SandHook::Hook;
-using namespace SandHook::Utils;
+using namespace SandLock::Lock;
+using namespace SandLock::Utils;
 
-CodeBuffer* InlineHook::backup_buffer = new AndroidCodeBuffer();
+CodeBuffer* InlineLock::backup_buffer = new AndroidCodeBuffer();
 
 #if defined(__arm__)
-InlineHook* InlineHook::instance = new InlineHookArm32Android();
+InlineLock* InlineLock::instance = new InlineLockArm32Android();
 #elif defined(__aarch64__)
-InlineHook* InlineHook::instance = new InlineHookArm64Android();
+InlineLock* InlineLock::instance = new InlineLockArm64Android();
 #endif
 
 void InterruptHandler(int signum, siginfo_t* siginfo, void* uc) {
     if (signum != SIGILL)
         return;
     sigcontext &context = reinterpret_cast<ucontext_t *>(uc)->uc_mcontext;
-    if (!InlineHook::instance->ExceptionHandler(signum, &context)) {
-        if (InlineHook::instance->old_sig_act.sa_sigaction) {
-            InlineHook::instance->old_sig_act.sa_sigaction(signum, siginfo, uc);
+    if (!InlineLock::instance->ExceptionHandler(signum, &context)) {
+        if (InlineLock::instance->old_sig_act.sa_sigaction) {
+            InlineLock::instance->old_sig_act.sa_sigaction(signum, siginfo, uc);
         }
     }
 }
 
-bool InlineHook::InitForSingleInstHook() {
+bool InlineLock::InitForSingleInstLock() {
     bool do_init = false;
     {
         AutoLock lock(hook_lock);
@@ -52,18 +52,18 @@ bool InlineHook::InitForSingleInstHook() {
     if (do_init) {
         int (*replace)(int, struct sigaction *, struct sigaction *) = [](int sig, struct sigaction *new_sa, struct sigaction *old_sa) -> int {
             if (sig != SIGILL) {
-                return InlineHook::instance->sigaction_backup(sig, new_sa, old_sa);
+                return InlineLock::instance->sigaction_backup(sig, new_sa, old_sa);
             } else {
                 if (old_sa) {
-                    *old_sa = InlineHook::instance->old_sig_act;
+                    *old_sa = InlineLock::instance->old_sig_act;
                 }
                 if (new_sa) {
-                    InlineHook::instance->old_sig_act = *new_sa;
+                    InlineLock::instance->old_sig_act = *new_sa;
                 }
                 return 0;
             }
         };
-        sigaction_backup = reinterpret_cast<SigAct>(SingleInstHook((void*)sigaction, (void*)replace));
+        sigaction_backup = reinterpret_cast<SigAct>(SingleInstLock((void*)sigaction, (void*)replace));
     }
     return inited;
 }

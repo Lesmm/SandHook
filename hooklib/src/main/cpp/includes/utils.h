@@ -2,8 +2,8 @@
 // Created by 甘尧 on 2019/1/13.
 //
 
-#ifndef SANDHOOK_UTILS_H
-#define SANDHOOK_UTILS_H
+#ifndef SANDLOCK_UTILS_H
+#define SANDLOCK_UTILS_H
 
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -38,4 +38,4 @@ bool flushCacheExt(Size addr, Size len);
 }
 
 
-#endif //SANDHOOK_UTILS_H
+#endif //SANDLOCK_UTILS_H

@@ -14,9 +14,9 @@
 
 #define CODE_OFFSET(I) I->offset + (I->InstType() == A32 ? 2 * 4 : 2 * 2)
 
-using namespace SandHook::RegistersA32;
+using namespace SandLock::RegistersA32;
 
-namespace SandHook {
+namespace SandLock {
     namespace AsmA32 {
 
 

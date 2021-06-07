@@ -9,13 +9,13 @@
 #include "code_relocate.h"
 #include "assembler_arm32.h"
 
-using namespace SandHook::Assembler;
-using namespace SandHook::Decoder;
-using namespace SandHook::AsmA32;
+using namespace SandLock::Assembler;
+using namespace SandLock::Decoder;
+using namespace SandLock::AsmA32;
 
 #define DEFINE_RELOCATE(T, X) void relocate_##T##_##X (INST_##T(X)* inst, void* toPc) throw(ErrorCodeException);
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         class CodeRelocateA32 : public CodeRelocate {

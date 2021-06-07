@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace SandHook {
+namespace SandLock {
     namespace VM {
         class Memory {
 

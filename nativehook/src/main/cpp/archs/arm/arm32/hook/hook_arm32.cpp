@@ -12,15 +12,15 @@
 #include "lock.h"
 #include "shellcode_arm.h"
 
-using namespace SandHook::Hook;
-using namespace SandHook::Decoder;
-using namespace SandHook::Asm;
-using namespace SandHook::Assembler;
-using namespace SandHook::Utils;
+using namespace SandLock::Lock;
+using namespace SandLock::Decoder;
+using namespace SandLock::Asm;
+using namespace SandLock::Assembler;
+using namespace SandLock::Utils;
 
 #include "assembler_arm32.h"
-using namespace SandHook::RegistersA32;
-void *InlineHookArm32Android::Hook(void *origin, void *replace) {
+using namespace SandLock::RegistersA32;
+void *InlineLockArm32Android::Lock(void *origin, void *replace) {
     AutoLock lock(hook_lock);
 
     void* origin_code;
@@ -80,7 +80,7 @@ void *InlineHookArm32Android::Hook(void *origin, void *replace) {
 IMPORT_SHELLCODE(BP_SHELLCODE)
 IMPORT_LABEL(callback_addr_s, Addr)
 IMPORT_LABEL(origin_addr_s, Addr)
-bool InlineHookArm32Android::BreakPoint(void *origin, void (*callback)(REG *)) {
+bool InlineLockArm32Android::BreakPoint(void *origin, void (*callback)(REG *)) {
     if (origin == nullptr || callback == nullptr)
         return false;
     AutoLock lock(hook_lock);
@@ -140,10 +140,10 @@ bool InlineHookArm32Android::BreakPoint(void *origin, void (*callback)(REG *)) {
     return true;
 }
 
-void *InlineHookArm32Android::SingleInstHook(void *origin, void *replace) {
+void *InlineLockArm32Android::SingleInstLock(void *origin, void *replace) {
     if (origin == nullptr || replace == nullptr)
         return nullptr;
-    if (!InitForSingleInstHook()) {
+    if (!InitForSingleInstLock()) {
         return nullptr;
     }
     AutoLock lock(hook_lock);
@@ -206,10 +206,10 @@ void *InlineHookArm32Android::SingleInstHook(void *origin, void *replace) {
     return GetThumbPC(backup);
 }
 
-bool InlineHookArm32Android::SingleBreakPoint(void *point, BreakCallback callback, void *data) {
+bool InlineLockArm32Android::SingleBreakPoint(void *point, BreakCallback callback, void *data) {
     if (point == nullptr || callback == nullptr)
         return false;
-    if (!InitForSingleInstHook())
+    if (!InitForSingleInstLock())
         return false;
     AutoLock lock(hook_lock);
 
@@ -264,7 +264,7 @@ bool InlineHookArm32Android::SingleBreakPoint(void *point, BreakCallback callbac
     return true;
 }
 
-bool InlineHookArm32Android::ExceptionHandler(int num, sigcontext *context) {
+bool InlineLockArm32Android::ExceptionHandler(int num, sigcontext *context) {
     InstT32 *code = reinterpret_cast<InstT32*>(context->arm_pc);
     if (!IS_OPCODE_T32(*code, HVC))
         return false;
@@ -272,7 +272,7 @@ bool InlineHookArm32Android::ExceptionHandler(int num, sigcontext *context) {
     hvc.Disassemble();
     if (hvc.imme >= hook_infos.size())
         return false;
-    HookInfo &hook_info = hook_infos[hvc.imme];
+    LockInfo &hook_info = hook_infos[hvc.imme];
     if (!hook_info.is_break_point) {
         context->arm_pc = reinterpret_cast<U32>(hook_info.replace);
     } else {

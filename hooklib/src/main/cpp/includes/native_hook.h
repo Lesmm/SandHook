@@ -2,18 +2,18 @@
 // Created by SwiftGan on 2019/4/12.
 //
 
-#ifndef SANDHOOK_NATIVE_HOOK_H
-#define SANDHOOK_NATIVE_HOOK_H
+#ifndef SANDLOCK_NATIVE_LOCK_H
+#define SANDLOCK_NATIVE_LOCK_H
 
 #include "sandhook.h"
 
-namespace SandHook {
+namespace SandLock {
 
-    class NativeHook {
+    class NativeLock {
     public:
         static bool hookDex2oat(bool disableDex2oat);
     };
 
 }
 
-#endif //SANDHOOK_NATIVE_HOOK_H
+#endif //SANDLOCK_NATIVE_LOCK_H

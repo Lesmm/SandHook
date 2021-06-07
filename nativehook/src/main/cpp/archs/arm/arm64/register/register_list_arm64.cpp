@@ -5,7 +5,7 @@
 #include "register_list_arm64.h"
 
 
-namespace SandHook {
+namespace SandLock {
     namespace RegistersA64 {
 #define INIT_REGISTERS(N) \
     WRegister W##N = WRegister(N); \

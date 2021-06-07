@@ -14,10 +14,10 @@
 
 typedef Addr REG;
 
-namespace SandHook {
-    namespace Hook {
+namespace SandLock {
+    namespace Lock {
 
-        struct HookInfo {
+        struct LockInfo {
             bool is_break_point;
             void *user_data;
             void *origin;
@@ -27,17 +27,17 @@ namespace SandHook {
 
         using BreakCallback = bool (*)(sigcontext*, void*);
 
-        class InlineHook {
+        class InlineLock {
         public:
             //return == backup method
-            virtual void *Hook(void *origin, void *replace) = 0;
+            virtual void *Lock(void *origin, void *replace) = 0;
             virtual bool BreakPoint(void *point, void (*callback)(REG[])) {
                 return false;
             };
             virtual bool SingleBreakPoint(void *point, BreakCallback callback, void *data = nullptr) {
                 return false;
             };
-            virtual void *SingleInstHook(void *origin, void *replace) {
+            virtual void *SingleInstLock(void *origin, void *replace) {
                 return nullptr;
             };
             virtual bool ExceptionHandler(int num, sigcontext *context) {
@@ -45,7 +45,7 @@ namespace SandHook {
             };
         protected:
 
-            virtual bool InitForSingleInstHook();
+            virtual bool InitForSingleInstLock();
 
             bool inited = false;
             static CodeBuffer* backup_buffer;
@@ -55,7 +55,7 @@ namespace SandHook {
             using SigAct = int (*)(int, struct sigaction *, struct sigaction *);
             SigAct sigaction_backup = nullptr;
         public:
-            static InlineHook* instance;
+            static InlineLock* instance;
             struct sigaction old_sig_act{};
         };
 

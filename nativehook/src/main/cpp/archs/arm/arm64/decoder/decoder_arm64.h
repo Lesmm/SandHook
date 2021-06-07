@@ -6,7 +6,7 @@
 
 #include "decoder.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace Decoder {
 
         class Arm64Decoder : public InstDecoder {

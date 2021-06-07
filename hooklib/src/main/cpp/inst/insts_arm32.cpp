@@ -7,7 +7,7 @@
 #include "../includes/inst.h"
 #include "../includes/trampoline.h"
 
-namespace SandHook {
+namespace SandLock {
 
     class InstThumb32 : public Inst {
     public:

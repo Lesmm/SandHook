@@ -8,7 +8,7 @@
 #include "register.h"
 
 
-namespace SandHook {
+namespace SandLock {
 
     namespace Asm {
 

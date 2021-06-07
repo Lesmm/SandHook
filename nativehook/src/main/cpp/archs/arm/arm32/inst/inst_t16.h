@@ -41,9 +41,9 @@ return COND; \
 #define DEFINE_INST_PCREL(X) class INST_T16(X) : public T16_INST_PC_REL<STRUCT_T16(X), ENUM_VALUE(InstCodeT16, InstCodeT16::X)>
 
 
-using namespace SandHook::RegistersA32;
+using namespace SandLock::RegistersA32;
 
-namespace SandHook {
+namespace SandLock {
 
     namespace AsmA32 {
 

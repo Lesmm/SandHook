@@ -5,7 +5,7 @@
 
 #include "register.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace VM {
 
         class CPU {

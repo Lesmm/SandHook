@@ -30,7 +30,7 @@ typedef Elf32_Off Elf_Off;
 #define ELF_R_SYM(i) ELF32_R_SYM(i)
 #endif
 
-namespace SandHook {
+namespace SandLock {
     namespace Elf {
 
         struct TextSegment {

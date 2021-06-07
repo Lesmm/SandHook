@@ -7,7 +7,7 @@
 #include <mutex>
 #include "assembler.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace Assembler {
         class AndroidCodeBuffer : public CodeBuffer {
         public:

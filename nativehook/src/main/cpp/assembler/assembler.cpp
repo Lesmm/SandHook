@@ -5,8 +5,8 @@
 #include <assembler.h>
 #include <platform.h>
 
-using namespace SandHook::Assembler;
-using namespace SandHook::Asm;
+using namespace SandLock::Assembler;
+using namespace SandLock::Asm;
 
 CodeContainer::CodeContainer(CodeBuffer *codeBuffer) : code_buffer(codeBuffer) {}
 

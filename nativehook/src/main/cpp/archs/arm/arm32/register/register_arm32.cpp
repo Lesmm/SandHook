@@ -5,16 +5,16 @@
 #include "register_arm32.h"
 #include "register_list_arm32.h"
 
-using namespace SandHook::RegistersA32;
+using namespace SandLock::RegistersA32;
 
-SandHook::Asm::RegisterA32::RegisterA32(U8 code) : Register(code) {
+SandLock::Asm::RegisterA32::RegisterA32(U8 code) : Register(code) {
 }
 
-SandHook::Asm::RegisterA32::RegisterA32() {
+SandLock::Asm::RegisterA32::RegisterA32() {
 
 }
 
-U8 SandHook::Asm::RegisterA32::Wide() {
+U8 SandLock::Asm::RegisterA32::Wide() {
     return 4;
 }
 

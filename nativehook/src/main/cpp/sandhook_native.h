@@ -19,16 +19,16 @@ extern "C"
 EXPORT void* SandGetSym(const char* so, const char* sym);
 
 extern "C"
-EXPORT void* SandInlineHook(void* origin, void* replace);
+EXPORT void* SandInlineLock(void* origin, void* replace);
 
 extern "C"
-EXPORT void* SandInlineHookSym(const char* so, const char* symb, void* replace);
+EXPORT void* SandInlineLockSym(const char* so, const char* symb, void* replace);
 
 extern "C"
-EXPORT void* SandSingleInstHook(void* origin, void* replace);
+EXPORT void* SandSingleInstLock(void* origin, void* replace);
 
 extern "C"
-EXPORT void* SandSingleInstHookSym(const char* so, const char* symb, void* replace);
+EXPORT void* SandSingleInstLockSym(const char* so, const char* symb, void* replace);
 
 extern "C"
 EXPORT bool SandBreakPoint(void *origin, void (*callback)(REG[]));

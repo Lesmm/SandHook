@@ -11,10 +11,10 @@
 #include "assembler.h"
 #include "decoder.h"
 
-using namespace SandHook::Assembler;
-using namespace SandHook::Decoder;
+using namespace SandLock::Assembler;
+using namespace SandLock::Decoder;
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         class CodeRelocate : public InstVisitor {

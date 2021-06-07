@@ -7,7 +7,7 @@
 #include "exception"
 
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         constexpr int ERROR_DEFAULT = 0;

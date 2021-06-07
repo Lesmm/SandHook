@@ -5,9 +5,9 @@
 #include "assembler_arm32.h"
 #include "exception.h"
 
-using namespace SandHook::Assembler;
-using namespace SandHook::RegistersA32;
-using namespace SandHook::AsmA32;
+using namespace SandLock::Assembler;
+using namespace SandLock::RegistersA32;
+using namespace SandLock::AsmA32;
 
 AssemblerA32::AssemblerA32(CodeBuffer* codeBuffer) {
     code_container.SetCodeBuffer(codeBuffer);

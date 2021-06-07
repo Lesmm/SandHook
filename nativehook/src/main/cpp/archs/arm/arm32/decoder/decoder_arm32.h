@@ -2,12 +2,12 @@
 // Created by swift on 2019/5/23.
 //
 
-#ifndef SANDHOOK_DECODER_A32_H
-#define SANDHOOK_DECODER_A32_H
+#ifndef SANDLOCK_DECODER_A32_H
+#define SANDLOCK_DECODER_A32_H
 
 #include "decoder.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace Decoder {
 
         class Arm32Decoder : public InstDecoder {
@@ -21,4 +21,4 @@ namespace SandHook {
     }
 }
 
-#endif //SANDHOOK_DECODER_A32_H
+#endif //SANDLOCK_DECODER_A32_H

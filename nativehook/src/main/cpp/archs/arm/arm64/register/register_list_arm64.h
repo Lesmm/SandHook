@@ -7,7 +7,7 @@
 #include "register_arm64.h"
 #include "base.h"
 
-using namespace SandHook::Asm;
+using namespace SandLock::Asm;
 
 // clang-format off
 #define AARCH64_REGISTER_COUNT 32
@@ -19,7 +19,7 @@ using namespace SandHook::Asm;
   R(24) R(25) R(26) R(27) R(28) R(29) R(30) R(31)
 
 
-namespace SandHook {
+namespace SandLock {
     namespace RegistersA64 {
 
 #define DEFINE_REGISTERS(N) \

@@ -6,8 +6,8 @@
 #include "inst_t32.h"
 #include "decoder_arm32.h"
 
-using namespace SandHook::Decoder;
-using namespace SandHook::AsmA32;
+using namespace SandLock::Decoder;
+using namespace SandLock::AsmA32;
 
 #define CASE(T, X) \
 if (IS_OPCODE_##T(*reinterpret_cast<Inst##T *>(pc), X)) { \

@@ -7,23 +7,23 @@
 #include "hook.h"
 #include <vector>
 
-namespace SandHook {
-    namespace Hook {
+namespace SandLock {
+    namespace Lock {
 
-        class InlineHookArm32Android : public InlineHook {
+        class InlineLockArm32Android : public InlineLock {
         public:
-            void *Hook(void *origin, void *replace) override;
+            void *Lock(void *origin, void *replace) override;
 
             bool BreakPoint(void *point, void (*callback)(REG *)) override;
 
             bool SingleBreakPoint(void *point, BreakCallback callback, void *data) override;
 
-            void *SingleInstHook(void *origin, void *replace) override;
+            void *SingleInstLock(void *origin, void *replace) override;
 
             bool ExceptionHandler(int num, sigcontext *context) override;
 
         private:
-            std::vector<HookInfo> hook_infos;
+            std::vector<LockInfo> hook_infos;
         };
 
     }

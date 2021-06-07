@@ -5,8 +5,8 @@
 #include "inst_arm64.h"
 #include "decoder_arm64.h"
 
-using namespace SandHook::Decoder;
-using namespace SandHook::AsmA64;
+using namespace SandLock::Decoder;
+using namespace SandLock::AsmA64;
 
 #define CASE(X) \
 if (IS_OPCODE_A64(*pc, X)) { \

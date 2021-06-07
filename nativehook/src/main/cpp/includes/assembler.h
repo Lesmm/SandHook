@@ -9,7 +9,7 @@
 #include "data.h"
 #include "platform.h"
 
-namespace SandHook {
+namespace SandLock {
 
     using namespace Asm;
 

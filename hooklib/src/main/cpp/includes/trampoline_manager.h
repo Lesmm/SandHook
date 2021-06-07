@@ -2,8 +2,8 @@
 // Created by swift on 2019/1/20.
 //
 
-#ifndef SANDHOOK_TRAMPOLINE_MANAGER_H
-#define SANDHOOK_TRAMPOLINE_MANAGER_H
+#ifndef SANDLOCK_TRAMPOLINE_MANAGER_H
+#define SANDLOCK_TRAMPOLINE_MANAGER_H
 
 #include "map"
 #include "list"
@@ -14,7 +14,7 @@
 #include "log.h"
 #include <unistd.h>
 
-namespace SandHook {
+namespace SandLock {
 
     #define MMAP_PAGE_SIZE sysconf(_SC_PAGESIZE)
     #define EXE_BLOCK_SIZE MMAP_PAGE_SIZE
@@ -22,10 +22,10 @@ namespace SandHook {
     using namespace art;
 
 
-    class HookTrampoline {
+    class LockTrampoline {
     public:
 
-        HookTrampoline() = default;
+        LockTrampoline() = default;
 
         Trampoline* replacement = nullptr;
         Trampoline* inlineJump = nullptr;
@@ -49,21 +49,21 @@ namespace SandHook {
         Code allocExecuteSpace(Size size);
 
         //java hook
-        HookTrampoline* installReplacementTrampoline(mirror::ArtMethod* originMethod, mirror::ArtMethod* hookMethod, mirror::ArtMethod* backupMethod);
-        HookTrampoline* installInlineTrampoline(mirror::ArtMethod* originMethod, mirror::ArtMethod* hookMethod, mirror::ArtMethod* backupMethod);
+        LockTrampoline* installReplacementTrampoline(mirror::ArtMethod* originMethod, mirror::ArtMethod* hookMethod, mirror::ArtMethod* backupMethod);
+        LockTrampoline* installInlineTrampoline(mirror::ArtMethod* originMethod, mirror::ArtMethod* hookMethod, mirror::ArtMethod* backupMethod);
 
         //native hook
-        HookTrampoline* installNativeHookTrampolineNoBackup(void* origin, void* hook);
+        LockTrampoline* installNativeLockTrampolineNoBackup(void* origin, void* hook);
 
         bool canSafeInline(mirror::ArtMethod* method);
 
         uint32_t sizeOfEntryCode(mirror::ArtMethod* method);
 
-        HookTrampoline* getHookTrampoline(mirror::ArtMethod* method) {
+        LockTrampoline* getLockTrampoline(mirror::ArtMethod* method) {
             return trampolines[method];
         }
 
-        bool methodHooked(ArtMethod *method) {
+        bool methodLocked(ArtMethod *method) {
             return trampolines.find(method) != trampolines.end();
         }
 
@@ -103,7 +103,7 @@ namespace SandHook {
     private:
 
         Size quickCompileOffset;
-        std::map<mirror::ArtMethod*,HookTrampoline*> trampolines;
+        std::map<mirror::ArtMethod*,LockTrampoline*> trampolines;
         std::list<Code> executeSpaceList = std::list<Code>();
         std::mutex allocSpaceLock;
         std::mutex installLock;
@@ -112,4 +112,4 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_TRAMPOLINE_MANAGER_H
+#endif //SANDLOCK_TRAMPOLINE_MANAGER_H

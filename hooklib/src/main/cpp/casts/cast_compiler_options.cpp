@@ -7,7 +7,7 @@
 
 extern int SDK_INT;
 
-namespace SandHook {
+namespace SandLock {
 
 
     class CastInlineMaxCodeUnits : public IMember<art::CompilerOptions, size_t> {

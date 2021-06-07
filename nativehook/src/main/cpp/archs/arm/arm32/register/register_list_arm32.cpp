@@ -4,7 +4,7 @@
 
 #include "register_list_arm32.h"
 
-namespace SandHook {
+namespace SandLock {
 namespace RegistersA32 {
 
 #define INIT_REGISTERS(N) \

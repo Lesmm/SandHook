@@ -14,7 +14,7 @@
 
 #include "log.h"
 
-using namespace SandHook::Elf;
+using namespace SandLock::Elf;
 
 
 TextSegment::TextSegment(void *start, void *end) : start(start), end(end) {}

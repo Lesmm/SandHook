@@ -10,7 +10,7 @@
 #include "../includes/elf_util.h"
 #include "../includes/log.h"
 
-using namespace SandHook;
+using namespace SandLock;
 
 ElfImg::ElfImg(const char *elf) {
     this->elf = elf;

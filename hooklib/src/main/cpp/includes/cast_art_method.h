@@ -2,13 +2,13 @@
 // Created by 甘尧 on 2019/1/12.
 //
 
-#ifndef SANDHOOK_CAST_ART_METHOD_H
-#define SANDHOOK_CAST_ART_METHOD_H
+#ifndef SANDLOCK_CAST_ART_METHOD_H
+#define SANDLOCK_CAST_ART_METHOD_H
 
 #include "cast.h"
 #include "trampoline_manager.h"
 
-namespace SandHook {
+namespace SandLock {
 
     class CastArtMethod {
     public:
@@ -34,6 +34,6 @@ namespace SandHook {
 
 }
 
-#endif //SANDHOOK_CAST_ART_METHOD_H
+#endif //SANDLOCK_CAST_ART_METHOD_H
 
 

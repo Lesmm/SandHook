@@ -6,7 +6,7 @@
 
 #include <mutex>
 
-namespace SandHook {
+namespace SandLock {
     namespace Utils {
 
 

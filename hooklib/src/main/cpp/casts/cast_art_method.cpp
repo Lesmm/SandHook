@@ -10,7 +10,7 @@
 
 extern int SDK_INT;
 
-namespace SandHook {
+namespace SandLock {
 
     class CastDexCacheResolvedMethods : public ArrayMember<art::mirror::ArtMethod, void *> {
     protected:

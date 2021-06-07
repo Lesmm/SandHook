@@ -8,9 +8,9 @@
 #include "register_arm64.h"
 #include "inst_arm64.h"
 
-using namespace SandHook::AsmA64;
+using namespace SandLock::AsmA64;
 
-namespace SandHook {
+namespace SandLock {
     namespace Assembler {
 
         class AssemblerA64 {

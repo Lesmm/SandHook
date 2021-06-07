@@ -8,16 +8,16 @@
 #include "code_buffer.h"
 #include "lock.h"
 
-using namespace SandHook::Hook;
-using namespace SandHook::Decoder;
-using namespace SandHook::Asm;
-using namespace SandHook::Assembler;
-using namespace SandHook::Utils;
+using namespace SandLock::Lock;
+using namespace SandLock::Decoder;
+using namespace SandLock::Asm;
+using namespace SandLock::Assembler;
+using namespace SandLock::Utils;
 
 #include "assembler_arm64.h"
 #include "code_relocate_arm64.h"
-using namespace SandHook::RegistersA64;
-void *InlineHookArm64Android::Hook(void *origin, void *replace) {
+using namespace SandLock::RegistersA64;
+void *InlineLockArm64Android::Lock(void *origin, void *replace) {
     AutoLock lock(hook_lock);
 
     void* backup = nullptr;
@@ -53,7 +53,7 @@ void *InlineHookArm64Android::Hook(void *origin, void *replace) {
     return backup;
 }
 
-bool InlineHookArm64Android::BreakPoint(void *point, void (*callback)(REG regs[])) {
+bool InlineLockArm64Android::BreakPoint(void *point, void (*callback)(REG regs[])) {
     if (point == nullptr || callback == nullptr)
         return false;
     AutoLock lock(hook_lock);
@@ -137,10 +137,10 @@ bool InlineHookArm64Android::BreakPoint(void *point, void (*callback)(REG regs[]
 }
 
 
-void *InlineHookArm64Android::SingleInstHook(void *origin, void *replace) {
+void *InlineLockArm64Android::SingleInstLock(void *origin, void *replace) {
     if (origin == nullptr || replace == nullptr)
         return nullptr;
-    if (!InitForSingleInstHook())
+    if (!InitForSingleInstLock())
         return nullptr;
     AutoLock lock(hook_lock);
     void* backup = nullptr;
@@ -174,10 +174,10 @@ void *InlineHookArm64Android::SingleInstHook(void *origin, void *replace) {
     return backup;
 }
 
-bool InlineHookArm64Android::SingleBreakPoint(void *point, BreakCallback callback, void *data) {
+bool InlineLockArm64Android::SingleBreakPoint(void *point, BreakCallback callback, void *data) {
     if (point == nullptr || callback == nullptr)
         return false;
-    if (!InitForSingleInstHook())
+    if (!InitForSingleInstLock())
         return false;
     AutoLock lock(hook_lock);
     void* backup = nullptr;
@@ -211,7 +211,7 @@ bool InlineHookArm64Android::SingleBreakPoint(void *point, BreakCallback callbac
     return true;
 }
 
-bool InlineHookArm64Android::ExceptionHandler(int num, sigcontext *context) {
+bool InlineLockArm64Android::ExceptionHandler(int num, sigcontext *context) {
     InstA64 *code = reinterpret_cast<InstA64*>(context->pc);
     if (!IS_OPCODE_A64(*code, EXCEPTION_GEN))
         return false;
@@ -219,7 +219,7 @@ bool InlineHookArm64Android::ExceptionHandler(int num, sigcontext *context) {
     hvc.Disassemble();
     if (hvc.imme >= hook_infos.size())
         return false;
-    HookInfo &hook_info = hook_infos[hvc.imme];
+    LockInfo &hook_info = hook_infos[hvc.imme];
     if (!hook_info.is_break_point) {
         context->pc = reinterpret_cast<U64>(hook_info.replace);
     } else {

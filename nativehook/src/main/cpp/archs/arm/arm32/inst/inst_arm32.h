@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace SandHook {
+namespace SandLock {
 
     namespace Asm {
 //        class INST_A64(STR_IMM) : public InstructionA64<STRUCT_A64(STR_IMM)> {

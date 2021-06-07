@@ -379,7 +379,7 @@ public class SandHook {
 
     private static native boolean initNative(int sdk, boolean debug);
 
-    public static native void setHookMode(int hookMode);
+    public static native void setLockMode(int hookMode);
 
     //default on!
     public static native void setInlineSafeCheck(boolean check);
@@ -404,7 +404,7 @@ public class SandHook {
 
     public static native boolean setNativeEntry(Member origin, Member hook, long nativeEntry);
 
-    public static native boolean initForPendingHook();
+    public static native boolean initForPendingLock();
 
     public static native void MakeInitializedClassVisibilyInitialized(long self);
 

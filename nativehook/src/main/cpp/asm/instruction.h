@@ -33,7 +33,7 @@ if (COND) { \
     valid_ = false; \
 }
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         template <typename S, U32 C>

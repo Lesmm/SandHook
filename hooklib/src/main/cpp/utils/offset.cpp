@@ -4,7 +4,7 @@
 
 #include "../includes/offset.h"
 
-namespace SandHook {
+namespace SandLock {
 
     template<typename T>
     int Offset::findOffset(void *start, size_t len, size_t step, T value) {

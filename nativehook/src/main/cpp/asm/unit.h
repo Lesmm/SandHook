@@ -8,7 +8,7 @@
 #include <memory>
 #include "base.h"
 
-namespace SandHook {
+namespace SandLock {
     namespace Asm {
 
         template <typename S>

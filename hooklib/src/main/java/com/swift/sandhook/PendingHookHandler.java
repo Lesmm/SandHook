@@ -18,7 +18,7 @@ public class PendingHookHandler {
     static {
         //init native hook
         if (SandHookConfig.delayHook) {
-            canUsePendingHook = SandHook.initForPendingHook();
+            canUsePendingHook = SandHook.initForPendingLock();
         }
     }
 

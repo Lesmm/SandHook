@@ -38,12 +38,12 @@ return COND; \
 
 #define DEFINE_INST_PCREL(X) class INST_A64(X) : public A64_INST_PC_REL<STRUCT_A64(X), ENUM_VALUE(InstCodeA64, InstCodeA64::X)>
 
-#define CAST_A64(X,V) reinterpret_cast<SandHook::AsmA64::INST_A64(X) *>(V)
+#define CAST_A64(X,V) reinterpret_cast<SandLock::AsmA64::INST_A64(X) *>(V)
 
-using namespace SandHook::RegistersA64;
-using namespace SandHook::Asm;
+using namespace SandLock::RegistersA64;
+using namespace SandLock::Asm;
 
-namespace SandHook {
+namespace SandLock {
 
     namespace AsmA64 {
 

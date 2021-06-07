@@ -2,8 +2,8 @@
 // Created by 甘尧 on 2019/1/12.
 //
 
-#ifndef SANDHOOK_ARCH_H
-#define SANDHOOK_ARCH_H
+#ifndef SANDLOCK_ARCH_H
+#define SANDLOCK_ARCH_H
 
 #define BYTE_POINT sizeof(void*)
 
@@ -45,4 +45,4 @@ static void clearCacheArm32(char* begin, char *end)
 #define ANDROID_Q 29
 #define ANDROID_R 30
 
-#endif //SANDHOOK_ARCH_H
+#endif //SANDLOCK_ARCH_H

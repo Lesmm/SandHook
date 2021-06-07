@@ -2,8 +2,8 @@
 // Created by swift on 2019/1/21.
 //
 
-#ifndef SANDHOOK_HIDE_API_H
-#define SANDHOOK_HIDE_API_H
+#ifndef SANDLOCK_HIDE_API_H
+#define SANDLOCK_HIDE_API_H
 
 #include <jni.h>
 #include "dlfcn_nougat.h"
@@ -58,4 +58,4 @@ extern "C" {
     void MakeInitializedClassVisibilyInitialized(void* self);
 }
 
-#endif //SANDHOOK_HIDE_API_H
+#endif //SANDLOCK_HIDE_API_H

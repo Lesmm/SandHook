@@ -4,9 +4,9 @@
 
 #include "assembler_arm64.h"
 
-using namespace SandHook::Assembler;
-using namespace SandHook::RegistersA64;
-using namespace SandHook::AsmA64;
+using namespace SandLock::Assembler;
+using namespace SandLock::RegistersA64;
+using namespace SandLock::AsmA64;
 
 AssemblerA64::AssemblerA64(CodeBuffer* codeBuffer) {
     code_container.SetCodeBuffer(codeBuffer);

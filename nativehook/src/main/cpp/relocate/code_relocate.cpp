@@ -4,7 +4,7 @@
 
 #include "code_relocate.h"
 
-using namespace SandHook::Asm;
+using namespace SandLock::Asm;
 
 //in range of Copy
 bool CodeRelocate::InRelocateRange(Off targetOffset, Addr targetLen) {

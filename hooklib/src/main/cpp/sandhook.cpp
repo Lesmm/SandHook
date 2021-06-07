@@ -7,6 +7,7 @@
 #include "includes/native_hook.h"
 #include "includes/elf_util.h"
 #include "includes/never_call.h"
+#include "java_bridge.h"
 #include <jni.h>
 
 SandHook::TrampolineManager &trampolineManager = SandHook::TrampolineManager::get();
@@ -366,9 +367,8 @@ static jmethodID method_class_init = nullptr;
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_swift_sandhook_SandHook_initForPendingHook(JNIEnv *env, jclass type) {
-    class_pending_hook = static_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("com/swift/sandhook/PendingHookHandler")));
-    method_class_init = env->GetStaticMethodID(class_pending_hook, "onClassInit", "(J)V");
+    class_pending_hook = static_cast<jclass>(env->NewGlobalRef(__FindClassEx__(env, kCLASS_PENDING)));
+    method_class_init = env->GetStaticMethodID(class_pending_hook, kMETHOD_PENDING_INIT, kMETHOD_PENDING_INIT_SIG);
     auto class_init_handler = [](void *clazz_ptr) {
         attachAndGetEvn()->CallStaticVoidMethod(class_pending_hook, method_class_init, (jlong) clazz_ptr);
         attachAndGetEvn()->ExceptionClear();
@@ -421,6 +421,10 @@ JNIEXPORT void* findSym(const char *elf, const char *sym_name) {
     SandHook::ElfImg elfImg(elf);
     return reinterpret_cast<void *>(elfImg.getSymbAddress(sym_name));
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_swift_sandhook_SandHook_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) ;
 
 static JNINativeMethod jniSandHook[] = {
         {
@@ -504,9 +508,14 @@ static JNINativeMethod jniSandHook[] = {
                 (void *) Java_com_swift_sandhook_SandHook_initForPendingHook
         },
         {
-            "MakeInitializedClassVisibilyInitialized",
+                "MakeInitializedClassVisibilyInitialized",
                 "(J)V",
                 (void*) Java_com_swift_sandhook_SandHook_MakeInitializedClassVisibilyInitialized
+        },
+        {
+                "test",
+                "(Ljava/lang/ClassLoader;[Ljava/lang/String;)V",
+                (void*) Java_com_swift_sandhook_SandHook_test
         }
 };
 
@@ -524,19 +533,37 @@ static JNINativeMethod jniNeverCall[] = {
 };
 
 static bool registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *jniMethods, int methods) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         return false;
     }
-    return env->RegisterNatives(clazz, jniMethods, methods) >= 0;
+    jint status = env->RegisterNatives(clazz, jniMethods, methods);
+    bool isOk = status >= 0;
+    return isOk;
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_swift_sandhook_SandHook_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) {
+    __FillVariables__(env, class_loader, classes_methods_fields);
+
+    int jniMethodSize = sizeof(JNINativeMethod);
+    if (!registerNativeMethods(env, kCLASS_SAND, jniSandHook, sizeof(jniSandHook) / jniMethodSize)) {
+        LOGE("JNI __JNI_OnLoad__ error kCLASS_SAND");
+        return;
+    }
+
+    if (!registerNativeMethods(env, kCLASS_NEVER, jniNeverCall, sizeof(jniNeverCall) / jniMethodSize)) {
+        LOGE("JNI __JNI_OnLoad__ error kCLASS_NEVER");
+        return;
+    }
+    LOGD("JNI __JNI_OnLoad__ success");
 }
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
-    const char* CLASS_SAND_HOOK = "com/swift/sandhook/SandHook";
-    const char* CLASS_NEVER_CALL = "com/swift/sandhook/ClassNeverCall";
-
-    int jniMethodSize = sizeof(JNINativeMethod);
+//    int jniMethodSize = sizeof(JNINativeMethod);
 
     JNIEnv *env = NULL;
 
@@ -544,13 +571,13 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
         return -1;
     }
 
-    if (!registerNativeMethods(env, CLASS_SAND_HOOK, jniSandHook, sizeof(jniSandHook) / jniMethodSize)) {
-        return -1;
-    }
-
-    if (!registerNativeMethods(env, CLASS_NEVER_CALL, jniNeverCall, sizeof(jniNeverCall) / jniMethodSize)) {
-        return -1;
-    }
+//    if (!registerNativeMethods(env, kCLASS_SAND, jniSandHook, sizeof(jniSandHook) / jniMethodSize)) {
+//        return -1;
+//    }
+//
+//    if (!registerNativeMethods(env, kCLASS_NEVER, jniNeverCall, sizeof(jniNeverCall) / jniMethodSize)) {
+//        return -1;
+//    }
 
     LOGW("JNI Loaded");
 

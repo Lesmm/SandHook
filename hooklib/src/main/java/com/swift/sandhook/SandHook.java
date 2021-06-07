@@ -45,12 +45,14 @@ public class SandHook {
 
     public static int testAccessFlag;
 
+    /*
     static {
         SandHookConfig.libLoader.loadLib();
         init();
     }
+    */
 
-    private static boolean init() {
+    public static boolean init() {
         initTestOffset();
         initThreadPeer();
         SandHookMethodResolver.init();
@@ -405,6 +407,8 @@ public class SandHook {
     public static native boolean initForPendingHook();
 
     public static native void MakeInitializedClassVisibilyInitialized(long self);
+
+    public static native void test(ClassLoader class_loader, String[] classes_methods_fields);
 
     @FunctionalInterface
     public interface HookModeCallBack {

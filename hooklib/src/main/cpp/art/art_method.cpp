@@ -6,6 +6,7 @@
 #include "../includes/cast_art_method.h"
 #include "../includes/hide_api.h"
 #include "../includes/utils.h"
+#include "../java_bridge.h"
 
 extern int SDK_INT;
 extern bool DEBUG;
@@ -163,7 +164,7 @@ bool ArtMethod::compile(JNIEnv* env) {
     //some unknown error when trigger jit for jni method manually
     if (isNative())
         return false;
-    Size threadId = getAddressFromJavaByCallMethod(env, "com/swift/sandhook/SandHook", "getThreadId");
+    Size threadId = getAddressFromJavaByCallMethod(env, kCLASS_SAND, kMETHOD_SAND_GETTHREAD);
     if (threadId == 0)
         return false;
     return compileMethod(this, reinterpret_cast<void *>(threadId)) && isCompiled();

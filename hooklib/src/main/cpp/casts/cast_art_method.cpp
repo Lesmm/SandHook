@@ -6,6 +6,7 @@
 #include "../includes/utils.h"
 #include "../includes/never_call.h"
 #include "../includes/log.h"
+#include "../java_bridge.h"
 
 extern int SDK_INT;
 
@@ -17,8 +18,7 @@ namespace SandHook {
             if (SDK_INT >= ANDROID_P)
                 return getParentSize() + 1;
             int offset = 0;
-            Size addr = getAddressFromJava(jniEnv, "com/swift/sandhook/SandHookMethodResolver",
-                                           "resolvedMethodsAddress");
+            Size addr = getAddressFromJava(jniEnv, kCLASS_RESOLVER, kMETHOD_RESOLVER_RMA);
             if (addr != 0) {
                 offset = findOffset(p, getParentSize(), 2, addr);
                 if (offset >= 0) {
@@ -53,8 +53,8 @@ namespace SandHook {
             } else if (SDK_INT == ANDROID_M) {
                 return getParentSize() - 3 * BYTE_POINT;
             } else if (SDK_INT <= ANDROID_L) {
-                Size addr = getAddressFromJava(jniEnv, "com/swift/sandhook/SandHookMethodResolver",
-                                               "entryPointFromInterpreter");
+                Size addr = getAddressFromJava(jniEnv, kCLASS_RESOLVER,
+                                               kMETHOD_RESOLVER_ENTRYINT);
                 int offset = 0;
                 if (addr != 0) {
                     offset = findOffset(p, getParentSize(), 2, addr);
@@ -75,8 +75,8 @@ namespace SandHook {
             if (SDK_INT >= ANDROID_M) {
                 return getParentSize() - BYTE_POINT;
             } else if (SDK_INT <= ANDROID_L) {
-                Size addr = getAddressFromJava(jniEnv, "com/swift/sandhook/SandHookMethodResolver",
-                                               "entryPointFromCompiledCode");
+                Size addr = getAddressFromJava(jniEnv, kCLASS_RESOLVER,
+                                               kMETHOD_RESOLVER_ENTRYCOM);
                 int offset = 0;
                 if (addr != 0) {
                     offset = findOffset(p, getParentSize(), 2, addr);
@@ -111,8 +111,8 @@ namespace SandHook {
     class CastAccessFlag : public IMember<art::mirror::ArtMethod, uint32_t> {
     protected:
         Size calOffset(JNIEnv *jniEnv, art::mirror::ArtMethod *p) override {
-            uint32_t accessFlag = getIntFromJava(jniEnv, "com/swift/sandhook/SandHook",
-                                                 "testAccessFlag");
+            uint32_t accessFlag = getIntFromJava(jniEnv, kCLASS_SAND,
+                                                 kFIELD_SAND_ACCESS);
             if (accessFlag == 0) {
                 accessFlag = 524313;
                 //kAccPublicApi
@@ -156,8 +156,8 @@ namespace SandHook {
                 + sizeof(uint32_t);
             }
             int offset = 0;
-            jint index = getIntFromJava(jniEnv, "com/swift/sandhook/SandHookMethodResolver",
-                                        "dexMethodIndex");
+            jint index = getIntFromJava(jniEnv, kCLASS_RESOLVER,
+                                        kFIELD_RESOLVER_DEX);
             if (index != 0) {
                 offset = findOffset(p, getParentSize(), 2, static_cast<uint32_t>(index));
                 if (offset >= 0) {
@@ -182,9 +182,9 @@ namespace SandHook {
 
     void CastArtMethod::init(JNIEnv *env) {
         //init ArtMethodSize
-        jclass sizeTestClass = env->FindClass("com/swift/sandhook/ArtMethodSizeTest");
-        jobject artMethod1 = getMethodObject(env, "com.swift.sandhook.ArtMethodSizeTest", "method1");
-        jobject artMethod2 = getMethodObject(env, "com.swift.sandhook.ArtMethodSizeTest", "method2");
+        jclass sizeTestClass = __FindClassEx__(env, kCLASS_MSIZE);
+        jobject artMethod1 = getMethodObject(env, kCLASS_MSIZE_DOT, kMETHOD_MSIZE_METHOD1);
+        jobject artMethod2 = getMethodObject(env, kCLASS_MSIZE_DOT, kMETHOD_MSIZE_METHOD2);
 
         env->CallStaticVoidMethod(sizeTestClass, env->FromReflectedMethod(artMethod1));
 
@@ -219,14 +219,14 @@ namespace SandHook {
         hotnessCount = new CastHotnessCount();
         hotnessCount->init(env, m1, size);
 
-        auto neverCallTestClass = "com.swift.sandhook.ClassNeverCall";
+        auto neverCallTestClass = kCLASS_NEVER_DOT;
 
         art::mirror::ArtMethod *neverCall = getArtMethod(env, getMethodObject(env,
                                                                               neverCallTestClass,
-                                                                              "neverCall"));
+                                                                              kMETHOD_NEVER_NC1));
         art::mirror::ArtMethod *neverCall2 = getArtMethod(env, getMethodObject(env,
                                                                                neverCallTestClass,
-                                                                               "neverCall2"));
+                                                                               kMETHOD_NEVER_NC2));
 
         bool beAot = entryPointQuickCompiled->get(neverCall) != entryPointQuickCompiled->get(neverCall2);
         if (beAot) {
@@ -242,10 +242,10 @@ namespace SandHook {
 
         art::mirror::ArtMethod *neverCallNative = getArtMethod(env, getMethodObject(env,
                                                                                     neverCallTestClass,
-                                                                                    "neverCallNative"));
+                                                                                    kMETHOD_NEVER_NATIVE1));
         art::mirror::ArtMethod *neverCallNative2 = getArtMethod(env, getMethodObject(env,
                                                                                      neverCallTestClass,
-                                                                                     "neverCallNative2"));
+                                                                                     kMETHOD_NEVER_NATIVE2));
 
         beAot = entryPointQuickCompiled->get(neverCallNative) != entryPointQuickCompiled->get(neverCallNative2);
         if (beAot) {
@@ -263,7 +263,7 @@ namespace SandHook {
 
         art::mirror::ArtMethod *neverCallStatic = getArtMethod(env, getMethodObject(env,
                                                                                     neverCallTestClass,
-                                                                                    "neverCallStatic"));
+                                                                                    kMETHOD_NEVER_STATIC));
         staticResolveStub = entryPointQuickCompiled->get(neverCallStatic);
 
     }

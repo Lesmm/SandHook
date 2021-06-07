@@ -1,0 +1,116 @@
+
+//-----------------------------------------------------------------------
+// m -j blueprint_tools
+// ./build/soong/androidmk external/json-c/Android.mk external/json-c/Android.bp
+//-----------------------------------------------------------------------
+
+LIBJSON_ROOT = ["."]
+
+//-----------------------------------------------------------------------
+// sandhook static library
+//-----------------------------------------------------------------------
+cc_library_static {
+    name: "sandhook",
+
+    srcs: [
+        "java_bridge.cpp",
+        "sandhook.cpp",
+        "trampoline/trampoline.cpp",
+        "trampoline/trampoline_manager.cpp",
+        "utils/dlfcn_nougat.cpp",
+        "utils/hide_api.cpp",
+        "utils/utils.cpp",
+        "utils/offset.cpp",
+        "utils/elf_util.cpp",
+        "casts/cast_art_method.cpp",
+        "casts/cast_compiler_options.cpp",
+        "art/art_method.cpp",
+        "art/art_compiler_options.cpp",
+        "trampoline/arch/arm32.S",
+        "trampoline/arch/arm64.S",
+        "inst/insts_arm32.cpp",
+        "inst/insts_arm64.cpp",
+        "nativehook/native_hook.cpp",
+
+        "nativelib/sandhook_native.cpp",
+        "nativelib/decoder/decoder.cpp",
+        "nativelib/relocate/code_relocate.cpp",
+        "nativelib/elf/elf.cpp",
+        "nativelib/assembler/assembler.cpp",
+        "nativelib/buffer/code_buffer.cpp",
+        "nativelib/utils/platform.cpp",
+        "nativelib/hook/hook.cpp",
+    ],
+
+    cflags: [
+        "-Wno-error",
+        "-Wno-unused-variable",
+        "-Wno-unused-function",
+        "-Wno-unused-parameter",
+        "-Wno-non-virtual-dtor",
+        "-fexceptions",
+    ],
+
+    vendor: true,
+
+    shared_libs: [
+        "liblog",
+    ],
+    
+    include_dirs: [
+        "external/sandhook/includes",
+        "external/sandhook/nativelib/includes",
+        "external/sandhook/nativelib/asm",
+        "external/sandhook/nativelib/decoder",
+        "external/sandhook/nativelib/elf",
+        "external/sandhook/nativelib/utils",
+        "external/sandhook/nativelib/includes",
+        "external/sandhook/nativelib/buffer",
+        "external/sandhook/nativelib/archs/arm",
+        "external/sandhook/nativelib/archs/arm/arm64/inst",
+        "external/sandhook/nativelib/archs/arm/arm64/register",
+        "external/sandhook/nativelib/archs/arm/arm64/decoder",
+        "external/sandhook/nativelib/archs/arm/arm64/assembler",
+        "external/sandhook/nativelib/archs/arm/arm64/relocate",
+        "external/sandhook/nativelib/archs/arm/arm64/hook",
+        "external/sandhook/nativelib/archs/arm/arm32/inst",
+        "external/sandhook/nativelib/archs/arm/arm32/register",
+        "external/sandhook/nativelib/archs/arm/arm32/assembler",
+        "external/sandhook/nativelib/archs/arm/arm32/decoder",
+        "external/sandhook/nativelib/archs/arm/arm32/hook",
+        "external/sandhook/nativelib/archs/arm/arm32/relocate",
+    ],
+
+    arch: {
+        arm: {
+            srcs: [
+
+                "nativelib/archs/arm/arm32/inst/inst_arm32.cpp",
+                "nativelib/archs/arm/arm32/inst/inst_t32.cpp",
+                "nativelib/archs/arm/arm32/inst/inst_t16.cpp",
+                "nativelib/archs/arm/arm32/register/register_arm32.cpp",
+                "nativelib/archs/arm/arm32/register/register_list_arm32.cpp",
+                "nativelib/archs/arm/arm32/assembler/assembler_arm32.cpp",
+                "nativelib/archs/arm/arm32/decoder/decoder_arm32.cpp",
+                "nativelib/archs/arm/arm32/hook/hook_arm32.cpp",
+                "nativelib/archs/arm/arm32/hook/breakpoint_shellcode.S",
+                "nativelib/archs/arm/arm32/relocate/code_relocate_arm32.cpp",
+
+            ],
+        },
+        arm64: {
+            srcs: [
+
+                "nativelib/archs/arm/arm64/assembler/assembler_arm64.cpp",
+                "nativelib/archs/arm/arm64/inst/inst_arm64.cpp",
+                "nativelib/archs/arm/arm64/register/register_arm64.cpp",
+                "nativelib/archs/arm/arm64/register/register_list_arm64.cpp",
+                "nativelib/archs/arm/arm64/decoder/decoder_arm64.cpp",
+                "nativelib/archs/arm/arm64/relocate/code_relocate_arm64.cpp",
+                "nativelib/archs/arm/arm64/hook/hook_arm64.cpp",
+
+            ],
+        },
+    },
+
+}

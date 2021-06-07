@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <Button
+        android:id="@+id/init_hook_now"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Init Env Now"
+
+        android:onClick="init_hook_now"
+        />
+
+    <Button
+        android:id="@+id/do_hook_now"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Do Hook Now"
+        android:layout_below="@+id/init_hook_now"
+
+        android:onClick="do_hook_now"
+        />
+
+    <Button
+        android:id="@+id/start_new_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:text="Start New Activity"
+        android:layout_below="@+id/do_hook_now"
+
+        android:onClick="start_new_activity"
+        />
+
+</RelativeLayout>

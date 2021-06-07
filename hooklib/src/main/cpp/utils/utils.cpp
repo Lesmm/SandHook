@@ -4,11 +4,12 @@
 
 #include <cstring>
 #include "../includes/utils.h"
+#include "../java_bridge.h"
 
 extern "C" {
 
 Size getAddressFromJava(JNIEnv *env, const char *className, const char *fieldName) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return 0;
@@ -22,7 +23,7 @@ Size getAddressFromJava(JNIEnv *env, const char *className, const char *fieldNam
 }
 
 Size callStaticMethodAddr(JNIEnv *env, const char *className, const char *method, const char *sig, ...) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return 0;
@@ -41,7 +42,7 @@ Size callStaticMethodAddr(JNIEnv *env, const char *className, const char *method
 }
 
 jobject callStaticMethodObject(JNIEnv *env, const char *className, const char *method, const char *sig, ...) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return 0;
@@ -62,8 +63,11 @@ jobject callStaticMethodObject(JNIEnv *env, const char *className, const char *m
 jobject getMethodObject(JNIEnv *env, const char *clazz, const char *method) {
     auto methodStr = env->NewStringUTF(method);
     auto clazzStr = env->NewStringUTF(clazz);
-    auto res = callStaticMethodObject(env, "com/swift/sandhook/SandHook", "getJavaMethod",
-                         "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", clazzStr, methodStr);
+    auto res = callStaticMethodObject(env,
+                                      kCLASS_SAND,
+                                      kMETHOD_SAND_GETJAVA,
+                                      kMETHOD_SAND_GETJAVA_SIG,
+                                      clazzStr, methodStr);
     env->ExceptionClear();
     env->DeleteLocalRef(methodStr);
     env->DeleteLocalRef(clazzStr);
@@ -71,7 +75,7 @@ jobject getMethodObject(JNIEnv *env, const char *clazz, const char *method) {
 }
 
 Size getAddressFromJavaByCallMethod(JNIEnv *env, const char *className, const char *methodName) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return 0;
@@ -87,7 +91,7 @@ Size getAddressFromJavaByCallMethod(JNIEnv *env, const char *className, const ch
 }
 
 jint getIntFromJava(JNIEnv *env, const char *className, const char *fieldName) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return 0;
@@ -101,7 +105,7 @@ jint getIntFromJava(JNIEnv *env, const char *className, const char *fieldName) {
 }
 
 bool getBooleanFromJava(JNIEnv *env, const char *className, const char *fieldName) {
-    jclass clazz = env->FindClass(className);
+    jclass clazz = __FindClassEx__(env, className);
     if (clazz == NULL) {
         printf("find class error !");
         return false;

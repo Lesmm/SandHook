@@ -6,6 +6,7 @@ ENABLE_LANGUAGE(ASM)
 add_definitions(-std=c++11)
 
 set(${PROJECT_NAME}_SOURCES
+        java_bridge.cpp
         sandhook.cpp
         trampoline/trampoline.cpp
         trampoline/trampoline_manager.cpp

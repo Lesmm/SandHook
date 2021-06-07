@@ -20,7 +20,7 @@ CPP 方面:
         关键字 hook 换成 lock 时: 因为只改代码, 文件名这些不用改, 基本上把 _sandhook_ 换成 _sandlock_ 就可以了
         而且 nativehook Module 没有需要替换 hook 的代码,只换了 hooklib Module 就行了
         注意: bool isSandHooker(char *const args[]) 那里写死了个 SandHooker, 需要注意在JAVA层的两个XposedCompat Module的
-        CLASS_NAME_PREFIX 属性也跟发凉着改了
+        CLASS_NAME_PREFIX 属性 及 hooklib 的 SandHookerStubClass_ 也跟着改了
 
     5. 复制 Nativehook 的 cpp 代码复制到 nativelib 下
 

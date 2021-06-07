@@ -39,7 +39,7 @@ public class HookerDexMakerNew implements HookMaker {
     public static final String METHOD_NAME_HOOK = "hook";
     public static final TypeId<Object[]> objArrayTypeId = TypeId.get(Object[].class);
     private static final String CLASS_DESC_PREFIX = "L";
-    private static final String CLASS_NAME_PREFIX = "SandHookerNew";
+    private static final String CLASS_NAME_PREFIX = "SandLockNew";
     private static final String FIELD_NAME_HOOK_INFO = "additionalHookInfo";
     private static final String FIELD_NAME_METHOD = "method";
     private static final String FIELD_NAME_BACKUP_METHOD = "backupMethod";

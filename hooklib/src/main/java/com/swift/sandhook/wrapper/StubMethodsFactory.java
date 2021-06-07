@@ -28,7 +28,7 @@ public class StubMethodsFactory {
         }
         try {
             curStub++;
-            Class proxyClass = (Class)proxyGenClass.invoke(null,"SandHookerStubClass_" + curStub, null, StubMethodsFactory.class.getClassLoader(), new Method[]{proxyGenClass}, null);
+            Class proxyClass = (Class)proxyGenClass.invoke(null,"SandLockerStubClass_" + curStub, null, StubMethodsFactory.class.getClassLoader(), new Method[]{proxyGenClass}, null);
             return proxyClass.getDeclaredMethods()[0];
         } catch (Throwable e) {
             e.printStackTrace();

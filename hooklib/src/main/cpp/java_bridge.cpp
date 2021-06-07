@@ -102,46 +102,6 @@ __get_characters_in__(JNIEnv *env, jobjectArray classes_methods_fields, int inde
 
 void __FillVariables__(JNIEnv *env, jobject class_loader, jobjectArray classes_methods_fields) {
 
-    // defaults
-
-//    kCLASS_SAND = "com/swift/sandhook/SandHook";
-//    kMETHOD_SAND_GETART = "getArtMethod";
-//    kMETHOD_SAND_GETART_SIG = "(Ljava/lang/reflect/Member;)J";
-//    kMETHOD_SAND_GETJAVA = "getJavaMethod";
-//    kMETHOD_SAND_GETJAVA_SIG = "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;";
-//    kMETHOD_SAND_GETTHREAD = "getThreadId";
-//    kFIELD_SAND_ACCESS = "testAccessFlag";
-//
-//    kCLASS_NEVER = "com/swift/sandhook/ClassNeverCall";
-//    kCLASS_NEVER_DOT = "com.swift.sandhook.ClassNeverCall";
-//    kMETHOD_NEVER_NC1 = "neverCall";
-//    kMETHOD_NEVER_NC2 = "neverCall2";
-//    kMETHOD_NEVER_NATIVE1 = "neverCallNative";
-//    kMETHOD_NEVER_NATIVE2 = "neverCallNative2";
-//    kMETHOD_NEVER_STATIC = "neverCallStatic";
-//
-//    kCLASS_PENDING = "com/swift/sandhook/PendingHookHandler";
-//    kMETHOD_PENDING_INIT = "onClassInit";
-//    kMETHOD_PENDING_INIT_SIG = "(J)V";
-//
-//    kCLASS_RESOLVER = "com/swift/sandhook/SandHookMethodResolver";
-//    kMETHOD_RESOLVER_RMA = "resolvedMethodsAddress";
-//    kMETHOD_RESOLVER_ENTRYINT = "entryPointFromInterpreter";
-//    kMETHOD_RESOLVER_ENTRYCOM = "entryPointFromCompiledCode";
-//    kFIELD_RESOLVER_DEX = "dexMethodIndex";
-//
-//    kCLASS_MSIZE = "com/swift/sandhook/ArtMethodSizeTest";
-//    kCLASS_MSIZE_DOT = "com.swift.sandhook.ArtMethodSizeTest";
-//    kMETHOD_MSIZE_METHOD1 = "method1";
-//    kMETHOD_MSIZE_METHOD2 = "method2";
-//
-//    kCLASS_CONFIG = "com/swift/sandhook/SandHookConfig";
-//    kFIELD_CONFIG_COMPILER = "compiler";
-
-
-
-    jboolean isCopy = true;
-
     kCLASS_SAND = __get_characters_in__(env, classes_methods_fields, 0);
     kMETHOD_SAND_GETART = __get_characters_in__(env, classes_methods_fields, 1);
     kMETHOD_SAND_GETART_SIG = __get_characters_in__(env, classes_methods_fields, 2);
@@ -181,4 +141,5 @@ void __FillVariables__(JNIEnv *env, jobject class_loader, jobjectArray classes_m
             getSymCompat(__Get_ART_SO_PATH__(env),
                          "_ZN3art11ClassLinker9FindClassEPNS_6ThreadEPKcNS_6HandleINS_6mirror11ClassLoaderEEE")
     );
+
 }

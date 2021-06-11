@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     public void init_hook_now(View view) {
 
         SandHookConfig.libLoader.loadLib();
-        SandHook.test(getApplication().getClassLoader(), classes_methods_fields);
+        SandHook.__JNI_OnLoad__(getApplication().getClassLoader(), classes_methods_fields);
         SandHook.init();
 
         SandHookConfig.DEBUG = BuildConfig.DEBUG;

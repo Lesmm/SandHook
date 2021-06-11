@@ -42,6 +42,8 @@ const char *kFIELD_CONFIG_COMPILER;
 
 void *(*ArtClassLinkerFindClass)(void *, char const *, void *) = nullptr;
 
+static jobject global_class_loader = nullptr;
+
 jint __Get_SDK_INT__(JNIEnv *env) {
     jclass jcBUILD_VERSION = env->FindClass("android/os/Build$VERSION");
     jfieldID jfSDK_INT = env->GetStaticFieldID(jcBUILD_VERSION, "SDK_INT", "I");
@@ -65,6 +67,7 @@ jclass __FindClassEx__(JNIEnv *env, const char *className) {
     jclass jcApplication = env->FindClass("android/app/Application");
     jclass jcVMClassLoader = env->FindClass("java/lang/VMClassLoader");
     jclass jcActivityThread = env->FindClass("android/app/ActivityThread");
+
     jmethodID jmCurrentActivityThread = env->GetStaticMethodID(jcActivityThread,
                                                                "currentActivityThread",
                                                                "()Landroid/app/ActivityThread;");
@@ -82,12 +85,18 @@ jclass __FindClassEx__(JNIEnv *env, const char *className) {
 
     jstring clazzName = env->NewStringUTF(className);
     jclass clazzInJava = (jclass) env->CallStaticObjectMethod(
-            jcVMClassLoader, jmFindLoadedClass, joClassLoader, clazzName);
+            jcVMClassLoader,
+            jmFindLoadedClass,
+            global_class_loader != nullptr ? global_class_loader : joClassLoader,
+            clazzName);
 //    LOGD("----------clazzInJava %s: %p", className, clazzInJava);
 //    jclass clazzInEnv = env->FindClass(className);
 //    LOGD("----------clazzInJava %s: %p", className, clazzInEnv);
 
     jclass clazz = clazzInJava;
+    if (clazz == NULL) {
+        LOGE("__FindClassEx__ NULL for %s", className);
+    }
     return clazz;
 }
 
@@ -96,11 +105,12 @@ __get_characters_in__(JNIEnv *env, jobjectArray classes_methods_fields, int inde
     jboolean isCopy = true;
     jstring string = (jstring) env->GetObjectArrayElement(classes_methods_fields, index);
     const char *result = env->GetStringUTFChars(string, &isCopy);
-    // env->ReleaseStringUTFChars(string, result);      // should do these after used const char *
+    // env->ReleaseStringUTFChars(string, result); // should do these after used const char *
     return result;
 }
 
 void __FillVariables__(JNIEnv *env, jobject class_loader, jobjectArray classes_methods_fields) {
+    global_class_loader = env->NewGlobalRef(class_loader);  // important!!! should create a new global ref!
 
     kCLASS_SAND = __get_characters_in__(env, classes_methods_fields, 0);
     kMETHOD_SAND_GETART = __get_characters_in__(env, classes_methods_fields, 1);

@@ -408,7 +408,7 @@ public class SandHook {
 
     public static native void MakeInitializedClassVisibilyInitialized(long self);
 
-    public static native void test(ClassLoader class_loader, String[] classes_methods_fields);
+    public static native void __JNI_OnLoad__(ClassLoader class_loader, String[] classes_methods_fields);
 
     @FunctionalInterface
     public interface HookModeCallBack {

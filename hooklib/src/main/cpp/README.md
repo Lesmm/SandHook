@@ -6,7 +6,7 @@ CPP 方面:
         #include "../nativelib/sandhook_native.h"
         ...
         //init native hook lib
-        hook_native = SandInlineHook;
+        hook_native = SandInlineHook;   // 注意后面改成 SandInlineLock
         // 然后注释掉接下来对 hook_native 赋值的那几行
         ...
 

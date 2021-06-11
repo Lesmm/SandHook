@@ -535,8 +535,8 @@ static bool registerNativeMethods(JNIEnv *env, const char *className, JNINativeM
 
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_com_swift_sandhook_SandLock_test(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) {
+JNIEXPORT void JNICALL 
+__JNI_OnLoad__(JNIEnv *env, jclass clazz, jobject class_loader, jobjectArray classes_methods_fields) {
     __FillVariables__(env, class_loader, classes_methods_fields);
 
     int jniMethodSize = sizeof(JNINativeMethod);
@@ -562,9 +562,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 
     JNINativeMethod jniTest[] = {
             {
-                    "test",
+                    "__JNI_OnLoad__",
                     "(Ljava/lang/ClassLoader;[Ljava/lang/String;)V",
-                    (void*) Java_com_swift_sandhook_SandLock_test
+                    (void*) __JNI_OnLoad__
             }
     };
 
